@@ -3,6 +3,7 @@ package edu.dyds.movies.di
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.dyds.movies.data.MoviesRepositoryImpl
+import edu.dyds.movies.data.local.InMemoryMoviesLocalDataSource
 import edu.dyds.movies.domain.usecase.GetMovieDetailsUseCase
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
 import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
@@ -35,8 +36,9 @@ object MoviesDependencyInjector {
                 requestTimeoutMillis = 5000
             }
         }
-        
-    private val moviesRepository = MoviesRepositoryImpl(tmdbHttpClient)
+
+    private val moviesLocalDataSource = InMemoryMoviesLocalDataSource()
+    private val moviesRepository = MoviesRepositoryImpl(tmdbHttpClient, moviesLocalDataSource)
     private val getPopularMoviesUseCase = GetPopularMoviesUseCase(moviesRepository)
     private val getMovieDetailsUseCase = GetMovieDetailsUseCase(moviesRepository)
 
