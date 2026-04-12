@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import edu.dyds.movies.di.MoviesDependencyInjector.getMoviesViewModel
+import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.presentation.detail.DetailScreen
 import edu.dyds.movies.presentation.home.HomeScreen
 

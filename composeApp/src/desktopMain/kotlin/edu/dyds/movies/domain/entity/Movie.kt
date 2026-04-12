@@ -1,5 +1,4 @@
-package edu.dyds.movies.domain.entity
-
+﻿package edu.dyds.movies.domain.entity
 data class Movie(
     val id: Int,
     val title: String,
@@ -12,5 +11,4 @@ data class Movie(
     val popularity: Double,
     val voteAverage: Double
 )
-
 data class QualifiedMovie(val movie: Movie, val isGoodMovie: Boolean)
