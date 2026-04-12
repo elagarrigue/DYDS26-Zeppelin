@@ -6,13 +6,13 @@
 
 ## Architecture You Need First
 - The project follows a Clean MVVM Architecture, structured by feature/layer: `presentation`, `domain`, `data`, and `di`.
-- UI flow is route-based: `home` and `detail/{movieId}` in `composeApp/src/desktopMain/kotlin/edu/dyds/movies/presentation/Navigation.kt`.
-- `HomeScreen` triggers data load in `LaunchedEffect(Unit)` via `MoviesViewModel.getAllMovies()`.
-- `DetailScreen` triggers detail load in `LaunchedEffect(Unit)` via `MoviesViewModel.getMovieDetail(id)`.
+- UI flow is route-based: `home` and `detail/{movieId}` in `composeApp/src/desktopMain/kotlin/edu/dyds/movies/presentation/navigation/Navigation.kt`.
+- `HomeRoute` triggers data load in `LaunchedEffect(Unit)` via `MoviesViewModel.getAllMovies()`.
+- `DetailRoute` triggers detail load in `LaunchedEffect(id)` via `MoviesViewModel.getMovieDetail(id)`.
 - Network + state logic is centralized in specific layers:
   - **Presentation**: `MoviesViewModel` (`moviesStateFlow` and `movieDetailStateFlow`) orchestrates UI states using UseCases; screens only render/trigger actions.
   - **Domain**: Encapsulates business rules. UseCases like `GetPopularMoviesUseCase` handle filtering/sorting (e.g. `MIN_VOTE_AVERAGE = 6.0`). Models like `Movie` live here.
-  - **Data**: The repository `MoviesRepositoryImpl` handles local caching and external network access, mapping Ktor responses to domain entities.
+    - **Data**: The repository `MoviesRepositoryImpl` orchestrates `data/local` and `data/external`, mapping Ktor responses to domain entities and delegating in-memory cache concerns to `MoviesLocalDataSource`.
 - Dependency wiring is manual through `MoviesDependencyInjector.getMoviesViewModel()` connecting Repository, UseCases, and the ViewModel.
 
 ## Data and Integration Boundaries

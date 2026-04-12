@@ -29,18 +29,31 @@ import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun HomeRoute(
     viewModel: MoviesViewModel,
     onGoodMovieClick: (Movie) -> Unit
 ) {
-
     LaunchedEffect(Unit) {
         viewModel.getAllMovies()
     }
 
     val state by viewModel.moviesStateFlow.collectAsState(MoviesViewModel.MoviesUiState())
+
+    HomeScreen(
+        state = state,
+        onRetry = viewModel::getAllMovies,
+        onGoodMovieClick = onGoodMovieClick
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    state: MoviesViewModel.MoviesUiState,
+    onRetry: () -> Unit,
+    onGoodMovieClick: (Movie) -> Unit
+) {
 
     MaterialTheme {
         Surface {
@@ -59,7 +72,7 @@ fun HomeScreen(
 
                 when {
                     state.movies.isNotEmpty() -> MovieGrid(padding, state.movies, onGoodMovieClick)
-                    state.isLoading.not() -> NoResults { viewModel.getAllMovies() }
+                    state.isLoading.not() -> NoResults(onRetry)
                 }
             }
         }
@@ -90,50 +103,22 @@ private fun MovieGrid(
 
 @Composable
 private fun GoodMovieItem(movie: Movie, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier.clickable { onClick() }
-    ) {
-        AsyncImage(
-            model = movie.poster,
-            contentDescription = movie.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(2 / 3f)
-                .clip(MaterialTheme.shapes.small)
-        )
-        Text(
-            text = movie.title,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-            modifier = Modifier.padding(8.dp)
-        )
-    }
+    MoviePosterItem(
+        movie = movie,
+        modifier = Modifier,
+        onClick = onClick
+    )
 }
 
 @Composable
 private fun BadMovieItem(movie: Movie) {
     var dialogState by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.alpha(0.7f).clickable { dialogState = true }
-    ) {
-        AsyncImage(
-            model = movie.poster,
-            contentDescription = movie.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(2 / 3f)
-                .clip(MaterialTheme.shapes.small)
-        )
-        Text(
-            text = movie.title,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-            modifier = Modifier.padding(8.dp)
-        )
-    }
+    MoviePosterItem(
+        movie = movie,
+        modifier = Modifier.alpha(0.7f),
+        onClick = { dialogState = true }
+    )
 
     DialogWindow(
         title = stringResource(Res.string.error),
@@ -151,3 +136,31 @@ private fun BadMovieItem(movie: Movie) {
         )
     }
 }
+
+@Composable
+private fun MoviePosterItem(
+    movie: Movie,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier.clickable { onClick() }
+    ) {
+        AsyncImage(
+            model = movie.poster,
+            contentDescription = movie.title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(2 / 3f)
+                .clip(MaterialTheme.shapes.small)
+        )
+        Text(
+            text = movie.title,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+

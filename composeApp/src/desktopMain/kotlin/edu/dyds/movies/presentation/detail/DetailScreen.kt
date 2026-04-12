@@ -30,17 +30,31 @@ import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(viewModel: MoviesViewModel, id: Int, onBack: () -> Unit) {
+fun DetailRoute(viewModel: MoviesViewModel, id: Int, onBack: () -> Unit) {
+
+    LaunchedEffect(id) {
+        viewModel.getMovieDetail(id)
+    }
 
     val state by viewModel.movieDetailStateFlow.collectAsState(MoviesViewModel.MovieDetailUiState())
 
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    DetailScreen(
+        state = state,
+        onBack = onBack,
+        onRetry = { viewModel.getMovieDetail(id) }
+    )
+}
 
-    LaunchedEffect(Unit) {
-        viewModel.getMovieDetail(id)
-    }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailScreen(
+    state: MoviesViewModel.MovieDetailUiState,
+    onBack: () -> Unit,
+    onRetry: () -> Unit
+) {
+
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     MaterialTheme {
         Surface {
@@ -57,8 +71,10 @@ fun DetailScreen(viewModel: MoviesViewModel, id: Int, onBack: () -> Unit) {
                 LoadingIndicator(enabled = state.isLoading, modifier = Modifier.padding(padding))
 
                 when {
-                    state.movie != null -> MovieDetail(movie = state.movie!!, modifier = Modifier.padding(padding))
-                    state.isLoading.not() -> NoResults { viewModel.getMovieDetail(id) }
+                    state.movie != null -> {
+                        MovieDetail(movie = state.movie, modifier = Modifier.padding(padding))
+                    }
+                    state.isLoading.not() -> NoResults(onRetry)
                 }
             }
         }
@@ -132,7 +148,7 @@ private fun DetailTopBar(
             ) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = null
                 )
             }
         },
