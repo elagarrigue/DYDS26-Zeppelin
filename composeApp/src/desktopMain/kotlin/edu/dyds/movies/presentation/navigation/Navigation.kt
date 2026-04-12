@@ -1,6 +1,8 @@
 @file:Suppress("FunctionName")
 
-package edu.dyds.movies.presentation
+package edu.dyds.movies.presentation.navigation
+
+import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
