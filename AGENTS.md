@@ -5,16 +5,20 @@
 - Runtime entrypoint is `composeApp/src/desktopMain/kotlin/edu/dyds/movies/main.kt`, which opens `App()` and delegates all UI flow to `Navigation()`.
 
 ## Architecture You Need First
-- UI flow is route-based: `home` and `detail/{movieId}` in `composeApp/src/desktopMain/kotlin/edu/dyds/movies/Navigation.kt`.
+- The project follows a Clean MVVM Architecture, structured by feature/layer: `presentation`, `domain`, `data`, and `di`.
+- UI flow is route-based: `home` and `detail/{movieId}` in `composeApp/src/desktopMain/kotlin/edu/dyds/movies/presentation/Navigation.kt`.
 - `HomeScreen` triggers data load in `LaunchedEffect(Unit)` via `MoviesViewModel.getAllMovies()`.
 - `DetailScreen` triggers detail load in `LaunchedEffect(Unit)` via `MoviesViewModel.getMovieDetail(id)`.
-- Network + state logic is centralized in `MoviesViewModel` (`moviesStateFlow` and `movieDetailStateFlow`); screens only render/trigger actions.
-- Dependency wiring is manual through `MoviesDependencyInjector.getMoviesViewModel()` (Compose `viewModel { ... }`).
+- Network + state logic is centralized in specific layers:
+  - **Presentation**: `MoviesViewModel` (`moviesStateFlow` and `movieDetailStateFlow`) orchestrates UI states using UseCases; screens only render/trigger actions.
+  - **Domain**: Encapsulates business rules. UseCases like `GetPopularMoviesUseCase` handle filtering/sorting (e.g. `MIN_VOTE_AVERAGE = 6.0`). Models like `Movie` live here.
+  - **Data**: The repository `MoviesRepositoryImpl` handles local caching and external network access, mapping Ktor responses to domain entities.
+- Dependency wiring is manual through `MoviesDependencyInjector.getMoviesViewModel()` connecting Repository, UseCases, and the ViewModel.
 
 ## Data and Integration Boundaries
 - TMDB access uses Ktor `HttpClient` with `DefaultRequest` in `MoviesDependencyInjector.kt`.
 - API host and auth query parameter are injected globally (`api.themoviedb.org`, `api_key`).
-- API models (`RemoteMovie`, `RemoteResult`) and domain model (`Movie`) live together in `Movie.kt`; mapping happens in `RemoteMovie.toDomainMovie()`.
+- API models (`RemoteMovie`, `RemoteResult`) live in `data/external/RemoteModels.kt` mapping explicitly to `domain/entity/Movie.kt`.
 - Image rendering uses Coil 3 (`AsyncImage`) and TMDB image URLs built in mapper (`w185` poster, `w780` backdrop).
 - Resource strings come from `composeApp/src/commonMain/composeResources/values/strings.xml`; generated `Res.string.*` is used in UI.
 
