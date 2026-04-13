@@ -1,0 +1,41 @@
+package edu.dyds.movies.data.external.tmdb
+
+import edu.dyds.movies.data.external.MoviesRemoteDataSource
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.http.URLProtocol
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
+
+private const val API_KEY = "d18da1b5da16397619c688b0263cd281"
+
+object TMDB: MoviesRemoteDataSource {
+    private val httpClient =
+        HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
+            }
+            install(DefaultRequest) {
+                url {
+                    protocol = URLProtocol.HTTPS
+                    host = "api.themoviedb.org"
+                    parameters.append("api_key", API_KEY)
+                }
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 5000
+            }
+        }
+
+    override suspend fun getPopularMovies(): TMDBResult =
+        httpClient.get("/3/discover/movie?sort_by=popularity.desc").body()
+
+    override suspend fun getMovieDetails(id: Int): TMDBMovie =
+        httpClient.get("/3/movie/$id").body()
+}
