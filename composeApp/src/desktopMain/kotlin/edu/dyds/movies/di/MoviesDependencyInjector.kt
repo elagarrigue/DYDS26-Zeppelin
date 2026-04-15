@@ -6,7 +6,8 @@ import edu.dyds.movies.data.MoviesRepositoryImpl
 import edu.dyds.movies.data.local.InMemoryMoviesLocalDataSource
 import edu.dyds.movies.domain.usecase.GetMovieDetailsUseCase
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
-import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
+import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
+import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -39,16 +40,22 @@ object MoviesDependencyInjector {
 
     private val moviesLocalDataSource = InMemoryMoviesLocalDataSource()
     private val moviesRepository = MoviesRepositoryImpl(tmdbHttpClient, moviesLocalDataSource)
-    private val getPopularMoviesUseCase = GetPopularMoviesUseCase(moviesRepository)
-    private val getMovieDetailsUseCase = GetMovieDetailsUseCase(moviesRepository)
 
     @Composable
-    fun getMoviesViewModel(): MoviesViewModel {
+    fun getPopularMoviesViewModel(): PopularMoviesViewModel {
         return viewModel { 
-            MoviesViewModel(
-                getPopularMoviesUseCase = getPopularMoviesUseCase,
-                getMovieDetailsUseCase = getMovieDetailsUseCase
-            ) 
+            PopularMoviesViewModel(
+                useCase = GetPopularMoviesUseCase(moviesRepository),
+            )
+        }
+    }
+
+    @Composable
+    fun getMovieDetailsViewModel(): MovieDetailsViewModel{
+        return viewModel {
+            MovieDetailsViewModel(
+                useCase = GetMovieDetailsUseCase(moviesRepository),
+            )
         }
     }
 }

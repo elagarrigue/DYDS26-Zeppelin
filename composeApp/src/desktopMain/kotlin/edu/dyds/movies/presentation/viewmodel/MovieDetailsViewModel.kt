@@ -10,30 +10,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class MoviesViewModel(
-    private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
-    private val getMovieDetailsUseCase: GetMovieDetailsUseCase
+class MovieDetailsViewModel(
+    private val useCase: GetMovieDetailsUseCase
 ) : ViewModel() {
-
-    private val moviesStateMutableStateFlow = MutableStateFlow(MoviesUiState())
     private val movieDetailStateMutableStateFlow = MutableStateFlow(MovieDetailUiState())
-
-    val moviesStateFlow: Flow<MoviesUiState> = moviesStateMutableStateFlow
     val movieDetailStateFlow: Flow<MovieDetailUiState> = movieDetailStateMutableStateFlow
-
-    fun getAllMovies() {
-        viewModelScope.launch {
-            moviesStateMutableStateFlow.emit(
-                MoviesUiState(isLoading = true)
-            )
-            moviesStateMutableStateFlow.emit(
-                MoviesUiState(
-                    isLoading = false,
-                    movies = getPopularMoviesUseCase()
-                )
-            )
-        }
-    }
 
     fun getMovieDetail(id: Int) {
         viewModelScope.launch {
@@ -43,16 +24,11 @@ class MoviesViewModel(
             movieDetailStateMutableStateFlow.emit(
                 MovieDetailUiState(
                     isLoading = false,
-                    movie = getMovieDetailsUseCase(id)
+                    movie = useCase(id)
                 )
             )
         }
     }
-
-    data class MoviesUiState(
-        val isLoading: Boolean = false,
-        val movies: List<QualifiedMovie> = emptyList(),
-    )
 
     data class MovieDetailUiState(
         val isLoading: Boolean = false,

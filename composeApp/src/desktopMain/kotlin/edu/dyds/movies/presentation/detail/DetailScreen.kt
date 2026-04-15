@@ -25,19 +25,20 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dydsproject.composeapp.generated.resources.*
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
+import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
+import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun DetailRoute(viewModel: MoviesViewModel, id: Int, onBack: () -> Unit) {
+fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
 
     LaunchedEffect(id) {
         viewModel.getMovieDetail(id)
     }
 
-    val state by viewModel.movieDetailStateFlow.collectAsState(MoviesViewModel.MovieDetailUiState())
+    val state by viewModel.movieDetailStateFlow.collectAsState(MovieDetailsViewModel.MovieDetailUiState())
 
     DetailScreen(
         state = state,
@@ -49,7 +50,7 @@ fun DetailRoute(viewModel: MoviesViewModel, id: Int, onBack: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    state: MoviesViewModel.MovieDetailUiState,
+    state: MovieDetailsViewModel.MovieDetailUiState,
     onBack: () -> Unit,
     onRetry: () -> Unit
 ) {

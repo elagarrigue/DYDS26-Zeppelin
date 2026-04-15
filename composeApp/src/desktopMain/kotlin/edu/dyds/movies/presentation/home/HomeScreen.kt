@@ -24,21 +24,21 @@ import dydsproject.composeapp.generated.resources.app_name
 import dydsproject.composeapp.generated.resources.error
 import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.domain.entity.QualifiedMovie
-import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
+import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeRoute(
-    viewModel: MoviesViewModel,
+    viewModel: PopularMoviesViewModel,
     onGoodMovieClick: (Movie) -> Unit
 ) {
     LaunchedEffect(Unit) {
         viewModel.getAllMovies()
     }
 
-    val state by viewModel.moviesStateFlow.collectAsState(MoviesViewModel.MoviesUiState())
+    val state by viewModel.moviesStateFlow.collectAsState(PopularMoviesViewModel.MoviesUiState())
 
     HomeScreen(
         state = state,
@@ -50,7 +50,7 @@ fun HomeRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    state: MoviesViewModel.MoviesUiState,
+    state: PopularMoviesViewModel.MoviesUiState,
     onRetry: () -> Unit,
     onGoodMovieClick: (Movie) -> Unit
 ) {
