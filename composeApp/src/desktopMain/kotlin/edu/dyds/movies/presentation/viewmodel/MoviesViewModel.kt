@@ -2,10 +2,10 @@ package edu.dyds.movies.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.domain.entity.QualifiedMovie
 import edu.dyds.movies.domain.usecase.GetMovieDetailsUseCase
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
+import edu.dyds.movies.presentation.state.MovieDetailUiState
+import edu.dyds.movies.presentation.state.MoviesUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -48,14 +48,4 @@ class MoviesViewModel(
             )
         }
     }
-
-    data class MoviesUiState(
-        val isLoading: Boolean = false,
-        val movies: List<QualifiedMovie> = emptyList(),
-    )
-
-    data class MovieDetailUiState(
-        val isLoading: Boolean = false,
-        val movie: Movie? = null,
-    )
 }
