@@ -25,14 +25,14 @@ import dydsproject.composeapp.generated.resources.error
 import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.domain.entity.QualifiedMovie
 import edu.dyds.movies.presentation.state.MoviesUiState
-import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
+import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeRoute(
-    viewModel: MoviesViewModel,
+    viewModel: PopularMoviesViewModel,
     onGoodMovieClick: (Movie) -> Unit
 ) {
     LaunchedEffect(Unit) {

@@ -2,8 +2,6 @@
 
 package edu.dyds.movies.presentation.navigation
 
-import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -12,34 +10,31 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import edu.dyds.movies.di.MoviesDependencyInjector.getMoviesViewModel
+import edu.dyds.movies.di.MoviesDependencyInjector.getMovieDetailsViewModel
+import edu.dyds.movies.di.MoviesDependencyInjector.getPopularMoviesViewModel
 import edu.dyds.movies.presentation.detail.DetailRoute
 import edu.dyds.movies.presentation.home.HomeRoute
 
 private const val HOME = "home"
-
 private const val DETAIL = "detail"
-
 private const val MOVIE_ID = "movieId"
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    val moviesViewModel = getMoviesViewModel()
 
     NavHost(navController = navController, startDestination = HOME) {
-        homeDestination(navController, moviesViewModel)
-        detailDestination(navController, moviesViewModel)
+        homeDestination(navController)
+        detailDestination(navController)
     }
 }
 
 private fun NavGraphBuilder.homeDestination(
     navController: NavHostController,
-    viewModel: MoviesViewModel
 ) {
     composable(HOME) {
         HomeRoute(
-            viewModel = viewModel,
+            viewModel = getPopularMoviesViewModel(),
             onGoodMovieClick = {
                 navController.navigate("$DETAIL/${it.id}")
             }
@@ -49,7 +44,6 @@ private fun NavGraphBuilder.homeDestination(
 
 private fun NavGraphBuilder.detailDestination(
     navController: NavHostController,
-    viewModel: MoviesViewModel
 ) {
     composable(
         route = "$DETAIL/{$MOVIE_ID}",
@@ -58,7 +52,7 @@ private fun NavGraphBuilder.detailDestination(
         val movieId = backstackEntry.arguments?.getInt(MOVIE_ID)
 
         movieId?.let {
-            DetailRoute(viewModel = viewModel, id = it, onBack = { navController.popBackStack() })
+            DetailRoute(viewModel = getMovieDetailsViewModel(), id = it, onBack = { navController.popBackStack() })
         }
     }
 }

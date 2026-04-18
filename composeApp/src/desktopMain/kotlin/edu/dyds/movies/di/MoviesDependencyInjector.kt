@@ -7,21 +7,27 @@ import edu.dyds.movies.data.external.tmdb.TMDB
 import edu.dyds.movies.data.local.InMemoryMovies
 import edu.dyds.movies.domain.usecase.GetMovieDetailsUseCase
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
-import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
-
+import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
+import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 
 object MoviesDependencyInjector {
     private val moviesRepository = MoviesRepositoryImpl(TMDB, InMemoryMovies)
-    private val getPopularMoviesUseCase = GetPopularMoviesUseCase(moviesRepository)
-    private val getMovieDetailsUseCase = GetMovieDetailsUseCase(moviesRepository)
 
     @Composable
-    fun getMoviesViewModel(): MoviesViewModel {
+    fun getPopularMoviesViewModel(): PopularMoviesViewModel {
         return viewModel { 
-            MoviesViewModel(
-                getPopularMoviesUseCase = getPopularMoviesUseCase,
-                getMovieDetailsUseCase = getMovieDetailsUseCase
-            ) 
+            PopularMoviesViewModel(
+                getPopularMovies = GetPopularMoviesUseCase(moviesRepository),
+            )
+        }
+    }
+
+    @Composable
+    fun getMovieDetailsViewModel(): MovieDetailsViewModel{
+        return viewModel {
+            MovieDetailsViewModel(
+                getMovieDetails = GetMovieDetailsUseCase(moviesRepository),
+            )
         }
     }
 }
