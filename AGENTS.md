@@ -36,7 +36,7 @@
 ## Project-Specific Coding Patterns
 - Keep composable naming style as-is (`@file:Suppress("FunctionName")` + PascalCase composables in screen files).
 - Reuse shared UI states/components: `LoadingIndicator(...)` and `NoResults { retry }` from `CommonComposables.kt`.
-- Home list behavior is opinionated: movies are sorted by vote average and classified as "good" using `minVoteAverage = 6.0` in `GetPopularMoviesUseCase`.
+- Home list behavior is opinionated: movies are sorted by vote average and classified as "good" using `MIN_VOTE_AVERAGE = 6.0` in `GetPopularMoviesUseCase`.
 - "Bad" movies are still shown but dimmed and open a desktop `DialogWindow` with `images/too_bad.png`.
 - Error handling is intentionally fallback-oriented: network failures return empty list/null (no exception bubbling).
 
