@@ -24,6 +24,7 @@ import dydsproject.composeapp.generated.resources.app_name
 import dydsproject.composeapp.generated.resources.error
 import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.domain.entity.QualifiedMovie
+import edu.dyds.movies.presentation.state.MoviesUiState
 import edu.dyds.movies.presentation.viewmodel.MoviesViewModel
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
@@ -38,7 +39,7 @@ fun HomeRoute(
         viewModel.getAllMovies()
     }
 
-    val state by viewModel.moviesStateFlow.collectAsState(MoviesViewModel.MoviesUiState())
+    val state by viewModel.moviesStateFlow.collectAsState(MoviesUiState())
 
     HomeScreen(
         state = state,
@@ -50,7 +51,7 @@ fun HomeRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    state: MoviesViewModel.MoviesUiState,
+    state: MoviesUiState,
     onRetry: () -> Unit,
     onGoodMovieClick: (Movie) -> Unit
 ) {
