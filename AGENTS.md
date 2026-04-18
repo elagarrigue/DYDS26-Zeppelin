@@ -52,3 +52,4 @@
 - If moving strings, keep `Res.string.*` usage consistent with Compose resources plugin generation.
 - Treat the current in-code API key in `MoviesDependencyInjector.kt` as sensitive; prefer environment/Gradle property injection for new work.
 - Existing tests are examples only (`composeApp/src/desktopTest/kotlin/TestExample.kt`); add feature-specific tests near changed behavior.
+- For any refactoring request, use only `.github/skills/refactoring-senior/SKILL.md`.
