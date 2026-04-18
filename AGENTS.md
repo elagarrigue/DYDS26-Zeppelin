@@ -5,20 +5,20 @@
 - Runtime entrypoint is `composeApp/src/desktopMain/kotlin/edu/dyds/movies/main.kt`, which opens `App()` and delegates all UI flow to `Navigation()`.
 
 ## Architecture You Need First
-- The project follows a Clean MVVM Architecture, structured by feature/layer: `presentation`, `domain`, `data`, and `di`.
+- The project follows a Clean MVVM Architecture, structured by layer: `presentation`, `domain`, `data`, and `di`.
 - UI flow is route-based: `home` and `detail/{movieId}` in `composeApp/src/desktopMain/kotlin/edu/dyds/movies/presentation/navigation/Navigation.kt`.
-- `HomeRoute` triggers data load in `LaunchedEffect(Unit)` via `MoviesViewModel.getAllMovies()`.
-- `DetailRoute` triggers detail load in `LaunchedEffect(id)` via `MoviesViewModel.getMovieDetail(id)`.
+- `HomeRoute` triggers data load in `LaunchedEffect(Unit)` via `PopularMoviesViewModel.getAllMovies()`.
+- `DetailRoute` triggers detail load in `LaunchedEffect(id)` via `MovieDetailsViewModel.getMovieDetail(id)`.
 - Network + state logic is centralized in specific layers:
-  - **Presentation**: `MoviesViewModel` (`moviesStateFlow` and `movieDetailStateFlow`) orchestrates UI states using UseCases; screens only render/trigger actions.
-  - **Domain**: Encapsulates business rules. UseCases like `GetPopularMoviesUseCase` handle filtering/sorting (e.g. `MIN_VOTE_AVERAGE = 6.0`). Models like `Movie` live here.
-    - **Data**: The repository `MoviesRepositoryImpl` orchestrates `data/local` and `data/external`, mapping Ktor responses to domain entities and delegating in-memory cache concerns to `MoviesLocalDataSource`.
-- Dependency wiring is manual through `MoviesDependencyInjector.getMoviesViewModel()` connecting Repository, UseCases, and the ViewModel.
+  - **Presentation**: `PopularMoviesViewModel` (`moviesStateFlow`) and `MovieDetailsViewModel` (`movieDetailStateFlow`) orchestrate UI states through UseCases; screens only render and emit actions.
+  - **Domain**: Encapsulates business rules. `GetPopularMoviesUseCase` sorts by vote average and classifies movies using `minVoteAverage = 6.0`. `Movie` and `QualifiedMovie` live in `domain/entity/Movie.kt`.
+  - **Data**: `MoviesRepositoryImpl` orchestrates `data/local` and `data/external`, maps remote responses to domain entities, and delegates cache responsibilities to `MoviesLocalDataSource`.
+- Dependency wiring is manual through `MoviesDependencyInjector.getPopularMoviesViewModel()` and `MoviesDependencyInjector.getMovieDetailsViewModel()`.
 
 ## Data and Integration Boundaries
-- TMDB access uses Ktor `HttpClient` with `DefaultRequest` in `MoviesDependencyInjector.kt`.
+- TMDB access is implemented in `data/external/tmdb/TMDB.kt` using a Ktor `HttpClient` configured with `ContentNegotiation`, `DefaultRequest`, and `HttpTimeout`.
 - API host and auth query parameter are injected globally (`api.themoviedb.org`, `api_key`).
-- API models (`RemoteMovie`, `RemoteResult`) live in `data/external/RemoteModels.kt` mapping explicitly to `domain/entity/Movie.kt`.
+- API contracts (`RemoteMovie`, `RemoteResult`, `MoviesRemoteDataSource`) live in `data/external` and concrete TMDB models (`TMDBMovie`, `TMDBResult`) live in `data/external/tmdb`, mapping explicitly to `domain/entity/Movie.kt`.
 - Image rendering uses Coil 3 (`AsyncImage`) and TMDB image URLs built in mapper (`w185` poster, `w780` backdrop).
 - Resource strings come from `composeApp/src/commonMain/composeResources/values/strings.xml`; generated `Res.string.*` is used in UI.
 
@@ -36,20 +36,20 @@
 ## Project-Specific Coding Patterns
 - Keep composable naming style as-is (`@file:Suppress("FunctionName")` + PascalCase composables in screen files).
 - Reuse shared UI states/components: `LoadingIndicator(...)` and `NoResults { retry }` from `CommonComposables.kt`.
-- Home list behavior is opinionated: movies are sorted by vote average and classified as "good" using `MIN_VOTE_AVERAGE = 6.0`.
+- Home list behavior is opinionated: movies are sorted by vote average and classified as "good" using `minVoteAverage = 6.0` in `GetPopularMoviesUseCase`.
 - "Bad" movies are still shown but dimmed and open a desktop `DialogWindow` with `images/too_bad.png`.
 - Error handling is intentionally fallback-oriented: network failures return empty list/null (no exception bubbling).
 
 ## Coding Rules for Agent Changes
 - Avoid adding source-code comments; prefer self-explanatory names, small functions, and clear control flow.
 - Follow clean-code practices in each edit: keep functions focused, remove duplication, and keep UI/state/network responsibilities separated.
-- Apply SOLID in the current architecture style: screens render and trigger actions, `MoviesViewModel` coordinates state, and data mapping stays in model/mapper code.
+- Apply SOLID in the current architecture style: screens render and trigger actions, ViewModels coordinate state, and data mapping stays in model/mapper code.
 - Write all new code in English (identifiers, function names, class names, and code-level text), even if the user conversation is in another language.
 
 ## Change Guidance for Agents
 - Preserve route constants/arguments in `Navigation.kt`; deep links rely on `detail/{movieId}` + `NavType.IntType`.
 - If changing API/domain fields, update both `RemoteMovie` serialization annotations and `toDomainMovie()` mapping.
 - If moving strings, keep `Res.string.*` usage consistent with Compose resources plugin generation.
-- Treat the current in-code API key in `MoviesDependencyInjector.kt` as sensitive; prefer environment/Gradle property injection for new work.
+- Treat the current in-code API key in `data/external/tmdb/TMDB.kt` as sensitive; prefer environment/Gradle property injection for new work.
 - Existing tests are examples only (`composeApp/src/desktopTest/kotlin/TestExample.kt`); add feature-specific tests near changed behavior.
 - For any refactoring request, use only `.github/skills/refactoring-senior/SKILL.md`.
