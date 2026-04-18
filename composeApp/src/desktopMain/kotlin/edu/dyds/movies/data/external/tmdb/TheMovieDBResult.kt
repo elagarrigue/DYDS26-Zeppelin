@@ -6,9 +6,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TMDBResult(
+data class TheMovieDBResult(
     val page: Int,
-    val results: List<TMDBMovie>,
+    val results: List<TheMovieDBMovie>,
     @SerialName("total_pages") val totalPages: Int,
     @SerialName("total_results") val totalResults: Int,
 ): RemoteResult {

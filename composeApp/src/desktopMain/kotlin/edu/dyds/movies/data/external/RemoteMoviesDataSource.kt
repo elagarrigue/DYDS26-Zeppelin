@@ -1,6 +1,6 @@
 package edu.dyds.movies.data.external
 
-interface MoviesRemoteDataSource {
+interface RemoteMoviesDataSource {
     suspend fun getPopularMovies(): RemoteResult
     suspend fun getMovieDetails(id: Int): RemoteMovie
 }

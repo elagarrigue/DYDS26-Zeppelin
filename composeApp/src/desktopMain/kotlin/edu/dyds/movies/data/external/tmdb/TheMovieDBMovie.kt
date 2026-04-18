@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TMDBMovie(
+data class TheMovieDBMovie(
     val id: Int,
     val title: String,
     val overview: String,
