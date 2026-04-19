@@ -5,13 +5,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.dyds.movies.data.MoviesRepositoryImpl
 import edu.dyds.movies.data.external.tmdb.TheMovieDB
 import edu.dyds.movies.data.local.MoviesCache
+import edu.dyds.movies.data.strategy.error.MovieDetailsErrorStrategy
+import edu.dyds.movies.data.strategy.error.PopularMoviesErrorStrategy
 import edu.dyds.movies.domain.usecase.GetMovieDetailsUseCase
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
 import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
 import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 
 object MoviesDependencyInjector {
-    private val moviesRepository = MoviesRepositoryImpl(TheMovieDB, MoviesCache)
+    private val moviesRepository = MoviesRepositoryImpl(
+        remoteMoviesDataSource = TheMovieDB,
+        localMoviesDataSource = MoviesCache,
+        popularMoviesErrorStrategy = PopularMoviesErrorStrategy,
+        movieDetailsErrorStrategy = MovieDetailsErrorStrategy
+    )
 
     @Composable
     fun getPopularMoviesViewModel(): PopularMoviesViewModel {
