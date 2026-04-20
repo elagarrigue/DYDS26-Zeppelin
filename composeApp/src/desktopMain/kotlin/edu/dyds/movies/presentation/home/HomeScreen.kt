@@ -24,9 +24,8 @@ import dydsproject.composeapp.generated.resources.app_name
 import dydsproject.composeapp.generated.resources.error
 import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.domain.entity.QualifiedMovie
-import edu.dyds.movies.presentation.state.MoviesUiState
-import edu.dyds.movies.presentation.utils.LoadingIndicator
-import edu.dyds.movies.presentation.utils.NoResults
+import edu.dyds.movies.presentation.state.UiState
+import edu.dyds.movies.presentation.utils.UiStateContent
 import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 import org.jetbrains.compose.resources.stringResource
 
@@ -39,7 +38,7 @@ fun HomeRoute(
         viewModel.getAllMovies()
     }
 
-    val state by viewModel.moviesStateFlow.collectAsState(MoviesUiState())
+    val state by viewModel.moviesStateFlow.collectAsState(UiState(domain = emptyList()))
 
     HomeScreen(
         state = state,
@@ -51,11 +50,10 @@ fun HomeRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    state: MoviesUiState,
+    state: UiState<List<QualifiedMovie>>,
     onRetry: () -> Unit,
     onGoodMovieClick: (Movie) -> Unit
 ) {
-
     MaterialTheme {
         Surface {
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -68,12 +66,13 @@ fun HomeScreen(
                 },
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
             ) { padding ->
-
-                LoadingIndicator(state.isLoading)
-
-                when {
-                    state.movies.isNotEmpty() -> MovieGrid(padding, state.movies, onGoodMovieClick)
-                    state.isLoading.not() -> NoResults(onRetry)
+                UiStateContent(
+                    state = state,
+                    onRetry = onRetry,
+                    isEmpty = { it.isNullOrEmpty() },
+                    modifier = Modifier.padding(padding)
+                ) { movies, contentModifier ->
+                    MovieGrid(PaddingValues(0.dp), movies, onGoodMovieClick, contentModifier)
                 }
             }
         }
@@ -84,14 +83,15 @@ fun HomeScreen(
 private fun MovieGrid(
     padding: PaddingValues,
     movies: List<QualifiedMovie>,
-    onMovieClick: (Movie) -> Unit
+    onMovieClick: (Movie) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(120.dp),
         contentPadding = PaddingValues(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.padding(padding)
+        modifier = modifier.padding(padding)
     ) {
         items(movies, key = { it.movie.id }) { qualifiedMovie ->
             when (qualifiedMovie.isGoodMovie) {

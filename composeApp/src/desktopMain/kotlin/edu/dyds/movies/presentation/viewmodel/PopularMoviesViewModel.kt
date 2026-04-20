@@ -2,8 +2,9 @@ package edu.dyds.movies.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import edu.dyds.movies.domain.entity.QualifiedMovie
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCase
-import edu.dyds.movies.presentation.state.MoviesUiState
+import edu.dyds.movies.presentation.state.UiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -11,18 +12,19 @@ import kotlinx.coroutines.launch
 class PopularMoviesViewModel(
     private val getPopularMovies: GetPopularMoviesUseCase,
 ) : ViewModel() {
-    private val moviesStateMutableStateFlow = MutableStateFlow(MoviesUiState())
-    val moviesStateFlow: Flow<MoviesUiState> = moviesStateMutableStateFlow
+    private val moviesStateMutableStateFlow =
+        MutableStateFlow(UiState<List<QualifiedMovie>>(domain = emptyList()))
+    val moviesStateFlow: Flow<UiState<List<QualifiedMovie>>> = moviesStateMutableStateFlow
 
     fun getAllMovies() {
         viewModelScope.launch {
             moviesStateMutableStateFlow.emit(
-                MoviesUiState(isLoading = true)
+                UiState(isLoading = true)
             )
             moviesStateMutableStateFlow.emit(
-                MoviesUiState(
+                UiState(
                     isLoading = false,
-                    movies = getPopularMovies()
+                    domain = getPopularMovies()
                 )
             )
         }
