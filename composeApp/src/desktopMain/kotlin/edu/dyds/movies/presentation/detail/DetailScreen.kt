@@ -25,9 +25,8 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dydsproject.composeapp.generated.resources.*
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.presentation.state.MovieDetailUiState
-import edu.dyds.movies.presentation.utils.LoadingIndicator
-import edu.dyds.movies.presentation.utils.NoResults
+import edu.dyds.movies.presentation.state.UiState
+import edu.dyds.movies.presentation.utils.UiStateContent
 import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
 import org.jetbrains.compose.resources.stringResource
 
@@ -38,7 +37,7 @@ fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
         viewModel.getMovieDetail(id)
     }
 
-    val state by viewModel.movieDetailStateFlow.collectAsState(MovieDetailUiState())
+    val state by viewModel.movieDetailStateFlow.collectAsState(UiState<Movie>())
 
     DetailScreen(
         state = state,
@@ -50,7 +49,7 @@ fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    state: MovieDetailUiState,
+    state: UiState<Movie>,
     onBack: () -> Unit,
     onRetry: () -> Unit
 ) {
@@ -62,20 +61,19 @@ fun DetailScreen(
             Scaffold(
                 topBar = {
                     DetailTopBar(
-                        title = state.movie?.title ?: "",
+                        title = state.domain?.title ?: "",
                         onBack = onBack,
                         scrollBehavior = scrollBehavior
                     )
                 }
             ) { padding ->
-
-                LoadingIndicator(enabled = state.isLoading, modifier = Modifier.padding(padding))
-
-                when {
-                    state.movie != null -> {
-                        MovieDetail(movie = state.movie, modifier = Modifier.padding(padding))
-                    }
-                    state.isLoading.not() -> NoResults(onRetry)
+                UiStateContent(
+                    state = state,
+                    onRetry = onRetry,
+                    isEmpty = { it == null },
+                    modifier = Modifier.padding(padding)
+                ) { movie, contentModifier ->
+                    MovieDetail(movie = movie, modifier = contentModifier)
                 }
             }
         }
