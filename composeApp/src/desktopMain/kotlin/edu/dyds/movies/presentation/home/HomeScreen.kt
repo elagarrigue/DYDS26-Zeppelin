@@ -2,33 +2,15 @@
 
 package edu.dyds.movies.presentation.home
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
-import coil3.compose.AsyncImage
-import dydsproject.composeapp.generated.resources.Res
-import dydsproject.composeapp.generated.resources.app_name
-import dydsproject.composeapp.generated.resources.error
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.domain.entity.QualifiedMovie
+import edu.dyds.movies.presentation.home.components.HomeContent
+import edu.dyds.movies.presentation.home.components.HomeTopBar
 import edu.dyds.movies.presentation.state.MoviesUiState
-import edu.dyds.movies.presentation.utils.LoadingIndicator
-import edu.dyds.movies.presentation.utils.NoResults
 import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeRoute(
@@ -60,108 +42,17 @@ fun HomeScreen(
         Surface {
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
             Scaffold(
-                topBar = {
-                    TopAppBar(
-                        { Text(stringResource(Res.string.app_name)) },
-                        scrollBehavior = scrollBehavior
-                    )
-                },
+                topBar = { HomeTopBar(scrollBehavior) },
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
             ) { padding ->
-
-                LoadingIndicator(state.isLoading)
-
-                when {
-                    state.movies.isNotEmpty() -> MovieGrid(padding, state.movies, onGoodMovieClick)
-                    state.isLoading.not() -> NoResults(onRetry)
-                }
+                HomeContent(
+                    state = state,
+                    padding = padding,
+                    onRetry = onRetry,
+                    onGoodMovieClick = onGoodMovieClick
+                )
             }
         }
-    }
-}
-
-@Composable
-private fun MovieGrid(
-    padding: PaddingValues,
-    movies: List<QualifiedMovie>,
-    onMovieClick: (Movie) -> Unit
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(120.dp),
-        contentPadding = PaddingValues(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.padding(padding)
-    ) {
-        items(movies, key = { it.movie.id }) { qualifiedMovie ->
-            when (qualifiedMovie.isGoodMovie) {
-                true -> GoodMovieItem(qualifiedMovie.movie) { onMovieClick(qualifiedMovie.movie) }
-                false -> BadMovieItem(qualifiedMovie.movie)
-            }
-        }
-    }
-}
-
-@Composable
-private fun GoodMovieItem(movie: Movie, onClick: () -> Unit) {
-    MoviePosterItem(
-        movie = movie,
-        modifier = Modifier,
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun BadMovieItem(movie: Movie) {
-    var dialogState by remember { mutableStateOf(false) }
-
-    MoviePosterItem(
-        movie = movie,
-        modifier = Modifier.alpha(0.7f),
-        onClick = { dialogState = true }
-    )
-
-    DialogWindow(
-        title = stringResource(Res.string.error),
-        resizable = false,
-        onCloseRequest = { dialogState = false },
-        visible = dialogState
-    ) {
-        Image(
-            painter = painterResource("images/too_bad.png"),
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-        )
-    }
-}
-
-@Composable
-private fun MoviePosterItem(
-    movie: Movie,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier.clickable { onClick() }
-    ) {
-        AsyncImage(
-            model = movie.poster,
-            contentDescription = movie.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(2 / 3f)
-                .clip(MaterialTheme.shapes.small)
-        )
-        Text(
-            text = movie.title,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-            modifier = Modifier.padding(8.dp)
-        )
     }
 }
 
