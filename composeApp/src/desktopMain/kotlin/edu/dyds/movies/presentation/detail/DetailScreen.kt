@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package edu.dyds.movies.presentation.detail
 
 import androidx.compose.material3.*

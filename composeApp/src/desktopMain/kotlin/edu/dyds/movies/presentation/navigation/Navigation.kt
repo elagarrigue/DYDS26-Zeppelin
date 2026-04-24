@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package edu.dyds.movies.presentation.navigation
 
 import androidx.compose.runtime.Composable

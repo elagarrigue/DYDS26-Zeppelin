@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package edu.dyds.movies.presentation.utils
 
 import androidx.compose.foundation.layout.*

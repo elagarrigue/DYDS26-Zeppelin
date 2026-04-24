@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package edu.dyds.movies.presentation.home.components
 
 import androidx.compose.foundation.layout.PaddingValues
