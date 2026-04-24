@@ -12,12 +12,14 @@ import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 
 object MoviesDependencyInjector {
     private val moviesRepository = MoviesRepositoryImpl(TheMovieDB, MoviesCache)
+    private val getPopularMoviesUseCase = GetPopularMoviesUseCase(moviesRepository)
+    private val getMovieDetailsUseCase = GetMovieDetailsUseCase(moviesRepository)
 
     @Composable
     fun getPopularMoviesViewModel(): PopularMoviesViewModel {
         return viewModel { 
             PopularMoviesViewModel(
-                getPopularMovies = GetPopularMoviesUseCase(moviesRepository),
+                getPopularMovies = getPopularMoviesUseCase,
             )
         }
     }
@@ -26,7 +28,7 @@ object MoviesDependencyInjector {
     fun getMovieDetailsViewModel(): MovieDetailsViewModel{
         return viewModel {
             MovieDetailsViewModel(
-                getMovieDetails = GetMovieDetailsUseCase(moviesRepository),
+                getMovieDetails = getMovieDetailsUseCase,
             )
         }
     }
