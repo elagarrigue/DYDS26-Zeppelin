@@ -19,7 +19,7 @@ object MoviesDependencyInjector {
     fun getPopularMoviesViewModel(): PopularMoviesViewModel {
         return viewModel { 
             PopularMoviesViewModel(
-                getPopularMovies = getPopularMoviesUseCase,
+                getPopularMoviesUseCase = getPopularMoviesUseCase,
             )
         }
     }
@@ -28,7 +28,7 @@ object MoviesDependencyInjector {
     fun getMovieDetailsViewModel(): MovieDetailsViewModel{
         return viewModel {
             MovieDetailsViewModel(
-                getMovieDetails = getMovieDetailsUseCase,
+                getMovieDetailsUseCase = getMovieDetailsUseCase,
             )
         }
     }
