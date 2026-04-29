@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class PopularMoviesViewModel(
-    private val getPopularMovies: GetPopularMoviesUseCase,
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
 ) : ViewModel() {
     private val moviesStateMutableStateFlow = MutableStateFlow(MoviesUiState())
     val moviesStateFlow: Flow<MoviesUiState> = moviesStateMutableStateFlow
 
-    fun getAllMovies() {
+    fun getPopularMovies() {
         viewModelScope.launch {
             moviesStateMutableStateFlow.emit(
                 MoviesUiState(isLoading = true)
@@ -22,7 +22,7 @@ class PopularMoviesViewModel(
             moviesStateMutableStateFlow.emit(
                 MoviesUiState(
                     isLoading = false,
-                    movies = getPopularMovies()
+                    movies = getPopularMoviesUseCase()
                 )
             )
         }

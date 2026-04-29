@@ -14,7 +14,7 @@ import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
 fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
 
     LaunchedEffect(id) {
-        viewModel.getMovieDetail(id)
+        viewModel.getMovieDetails(id)
     }
 
     val state by viewModel.movieDetailStateFlow.collectAsState(MovieDetailUiState())
@@ -22,7 +22,7 @@ fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
     DetailScreen(
         state = state,
         onBack = onBack,
-        onRetry = { viewModel.getMovieDetail(id) }
+        onRetry = { viewModel.getMovieDetails(id) }
     )
 }
 

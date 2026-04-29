@@ -16,14 +16,14 @@ fun HomeRoute(
     onGoodMovieClick: (Movie) -> Unit
 ) {
     LaunchedEffect(Unit) {
-        viewModel.getAllMovies()
+        viewModel.getPopularMovies()
     }
 
     val state by viewModel.moviesStateFlow.collectAsState(MoviesUiState())
 
     HomeScreen(
         state = state,
-        onRetry = viewModel::getAllMovies,
+        onRetry = viewModel::getPopularMovies,
         onGoodMovieClick = onGoodMovieClick
     )
 }
