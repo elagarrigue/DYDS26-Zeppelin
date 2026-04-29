@@ -12,7 +12,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import edu.dyds.movies.presentation.state.MovieDetailUiState
+import edu.dyds.movies.presentation.detail.MovieDetailUiState
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
 
@@ -48,7 +48,3 @@ fun DetailTopBar(
         scrollBehavior = scrollBehavior
     )
 }
-
-
-
-

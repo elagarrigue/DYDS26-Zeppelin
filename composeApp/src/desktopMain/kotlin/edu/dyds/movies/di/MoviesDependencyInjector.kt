@@ -7,7 +7,7 @@ import edu.dyds.movies.data.external.tmdb.TheMovieDB
 import edu.dyds.movies.data.local.MoviesCache
 import edu.dyds.movies.domain.usecase.GetMovieDetailsUseCaseImpl
 import edu.dyds.movies.domain.usecase.GetPopularMoviesUseCaseImpl
-import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
+import edu.dyds.movies.presentation.detail.MovieDetailsViewModel
 import edu.dyds.movies.presentation.home.PopularMoviesViewModel
 
 object MoviesDependencyInjector {

@@ -7,8 +7,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import edu.dyds.movies.presentation.detail.components.DetailContent
 import edu.dyds.movies.presentation.detail.components.DetailTopBar
-import edu.dyds.movies.presentation.state.MovieDetailUiState
-import edu.dyds.movies.presentation.viewmodel.MovieDetailsViewModel
 
 @Composable
 fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
@@ -56,4 +54,3 @@ fun DetailScreen(
         }
     }
 }
-
