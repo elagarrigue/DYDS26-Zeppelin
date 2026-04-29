@@ -7,8 +7,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import edu.dyds.movies.domain.entity.Movie
 import edu.dyds.movies.presentation.home.components.HomeContent
 import edu.dyds.movies.presentation.home.components.HomeTopBar
-import edu.dyds.movies.presentation.state.MoviesUiState
-import edu.dyds.movies.presentation.viewmodel.PopularMoviesViewModel
 
 @Composable
 fun HomeRoute(
@@ -53,4 +51,3 @@ fun HomeScreen(
         }
     }
 }
-

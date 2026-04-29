@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import dydsproject.composeapp.generated.resources.Res
 import dydsproject.composeapp.generated.resources.app_name
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.presentation.state.MoviesUiState
+import edu.dyds.movies.presentation.home.MoviesUiState
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
 import org.jetbrains.compose.resources.stringResource
@@ -37,8 +37,3 @@ fun HomeContent(
         state.isLoading.not() -> NoResults(onRetry)
     }
 }
-
-
-
-
-
