@@ -1,4 +1,4 @@
-package edu.dyds.movies.data.external.tmdb
+package edu.dyds.movies.data.external.implementation
 
 import edu.dyds.movies.data.external.RemoteMovie
 import edu.dyds.movies.domain.entity.Movie
@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TheMovieDBMovie(
+data class RemoteMovieImpl(
     val id: Int,
     val title: String,
     val overview: String,
