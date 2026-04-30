@@ -96,3 +96,6 @@ local.properties
 # Code style and JDK config (machine-specific)
 .idea/codeStyles/
 .idea/misc.xml
+
+# Idea folder
+/.idea/
