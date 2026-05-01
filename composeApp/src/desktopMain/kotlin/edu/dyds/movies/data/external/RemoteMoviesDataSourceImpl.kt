@@ -1,6 +1,5 @@
-package edu.dyds.movies.data.external.implementation
+package edu.dyds.movies.data.external
 
-import edu.dyds.movies.data.external.RemoteMoviesDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
@@ -13,7 +12,7 @@ import kotlinx.serialization.json.Json
 
 private const val API_KEY = "d18da1b5da16397619c688b0263cd281"
 
-object RemoteMoviesDataSourceImpl: RemoteMoviesDataSource {
+class RemoteMoviesDataSourceImpl: RemoteMoviesDataSource {
     private val httpClient =
         HttpClient {
             install(ContentNegotiation) {
@@ -33,9 +32,9 @@ object RemoteMoviesDataSourceImpl: RemoteMoviesDataSource {
             }
         }
 
-    override suspend fun getPopularMovies(): RemoteResultImpl =
+    override suspend fun getPopularMovies(): RemoteResult =
         httpClient.get("/3/discover/movie?sort_by=popularity.desc").body()
 
-    override suspend fun getMovieDetails(id: Int): RemoteMovieImpl =
+    override suspend fun getMovieDetails(id: Int): RemoteMovie =
         httpClient.get("/3/movie/$id").body()
 }
