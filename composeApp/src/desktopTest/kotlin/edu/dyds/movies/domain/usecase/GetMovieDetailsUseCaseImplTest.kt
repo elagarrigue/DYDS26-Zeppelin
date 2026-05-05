@@ -5,6 +5,7 @@ import edu.dyds.movies.fakes.movie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class GetMovieDetailsUseCaseImplTest {
 
@@ -20,7 +21,23 @@ class GetMovieDetailsUseCaseImplTest {
 
         // assert
         assertEquals(expected, result)
+        assertEquals(1, repository.getMovieDetailsCalls)
+    }
+
+    @Test
+    fun `invoke should return null when repository returns null`() = runTest {
+        // arrange
+        val repository = FakeMoviesRepository(movieDetails = null)
+        val useCase = GetMovieDetailsUseCaseImpl(repository)
+
+        // act
+        val result = useCase(10)
+
+        // assert
+        assertNull(result)
+        assertEquals(1, repository.getMovieDetailsCalls)
     }
 }
+
 
 

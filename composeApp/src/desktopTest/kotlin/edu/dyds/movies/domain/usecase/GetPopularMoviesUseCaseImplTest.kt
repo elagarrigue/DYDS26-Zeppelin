@@ -24,6 +24,8 @@ class GetPopularMoviesUseCaseImplTest {
 
         // assert
         assertEquals(listOf(high, edge, low), result.map { it.movie })
+        assertEquals(3, result.size)
+        assertEquals(1, repository.getPopularMoviesCalls)
         assertTrue(result.first { it.movie.id == 3 }.isGoodMovie)
         assertTrue(result.first { it.movie.id == 2 }.isGoodMovie)
         assertFalse(result.first { it.movie.id == 1 }.isGoodMovie)
@@ -40,7 +42,9 @@ class GetPopularMoviesUseCaseImplTest {
 
         // assert
         assertEquals(emptyList(), result)
+        assertEquals(1, repository.getPopularMoviesCalls)
     }
 }
+
 
 

@@ -66,6 +66,24 @@ class MoviesRepositoryImplTest {
     }
 
     @Test
+    fun `getPopularMovies should cache empty list when remote returns empty`() = runTest {
+        // arrange
+        val remoteResult = remoteResult(results = emptyList())
+        val local = FakeLocalMoviesDataSource()
+        val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
+        val repository = MoviesRepositoryImpl(remote, local)
+
+        // act
+        val result = repository.getPopularMovies()
+
+        // assert
+        assertEquals(emptyList(), result)
+        assertEquals(1, remote.getPopularMoviesCalls)
+        assertEquals(1, local.savePopularMoviesCalls)
+        assertEquals(emptyList(), local.lastSaved)
+    }
+
+    @Test
     fun `getMovieDetails should return mapped movie when remote succeeds`() = runTest {
         // arrange
         val remoteMovie = remoteMovie(id = 20)
@@ -96,5 +114,6 @@ class MoviesRepositoryImplTest {
         assertEquals(1, remote.getMovieDetailsCalls)
     }
 }
+
 
 
