@@ -1,4 +1,4 @@
-package edu.dyds.movies.testdoubles
+package edu.dyds.movies.fakes
 
 import edu.dyds.movies.data.external.RemoteMovie
 import edu.dyds.movies.data.external.RemoteMoviesDataSource
@@ -134,4 +134,5 @@ class FakeLocalMoviesDataSource(
         cache.addAll(movies)
     }
 }
+
 

@@ -1,10 +1,10 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.testdoubles.FakeLocalMoviesDataSource
-import edu.dyds.movies.testdoubles.FakeRemoteMoviesDataSource
-import edu.dyds.movies.testdoubles.movie
-import edu.dyds.movies.testdoubles.remoteMovie
-import edu.dyds.movies.testdoubles.remoteResult
+import edu.dyds.movies.fakes.FakeLocalMoviesDataSource
+import edu.dyds.movies.fakes.FakeRemoteMoviesDataSource
+import edu.dyds.movies.fakes.movie
+import edu.dyds.movies.fakes.remoteMovie
+import edu.dyds.movies.fakes.remoteResult
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,13 +14,16 @@ class MoviesRepositoryImplTest {
 
     @Test
     fun `getPopularMovies should return local data and skip remote when cache is not empty`() = runTest {
+        // arrange
         val localMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeLocalMoviesDataSource(initialMovies = localMovies)
         val remote = FakeRemoteMoviesDataSource(popularMoviesException = IllegalStateException())
         val repository = MoviesRepositoryImpl(remote, local)
 
+        // act
         val result = repository.getPopularMovies()
 
+        // assert
         assertEquals(localMovies, result)
         assertEquals(0, remote.getPopularMoviesCalls)
         assertEquals(0, local.savePopularMoviesCalls)
@@ -28,15 +31,18 @@ class MoviesRepositoryImplTest {
 
     @Test
     fun `getPopularMovies should fetch remote data, map and cache when local is empty`() = runTest {
+        // arrange
         val remoteMovies = listOf(remoteMovie(id = 1), remoteMovie(id = 2))
         val remoteResult = remoteResult(results = remoteMovies)
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
         val repository = MoviesRepositoryImpl(remote, local)
 
+        // act
         val result = repository.getPopularMovies()
         val expected = remoteResult.toDomainMovieList()
 
+        // assert
         assertEquals(expected, result)
         assertEquals(1, remote.getPopularMoviesCalls)
         assertEquals(1, local.savePopularMoviesCalls)
@@ -45,12 +51,15 @@ class MoviesRepositoryImplTest {
 
     @Test
     fun `getPopularMovies should return empty list when remote fails`() = runTest {
+        // arrange
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesException = IllegalStateException())
         val repository = MoviesRepositoryImpl(remote, local)
 
+        // act
         val result = repository.getPopularMovies()
 
+        // assert
         assertEquals(emptyList(), result)
         assertEquals(1, remote.getPopularMoviesCalls)
         assertEquals(0, local.savePopularMoviesCalls)
@@ -58,27 +67,34 @@ class MoviesRepositoryImplTest {
 
     @Test
     fun `getMovieDetails should return mapped movie when remote succeeds`() = runTest {
+        // arrange
         val remoteMovie = remoteMovie(id = 20)
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieDetailsResult = remoteMovie)
         val repository = MoviesRepositoryImpl(remote, local)
 
+        // act
         val result = repository.getMovieDetails(20)
 
+        // assert
         assertEquals(remoteMovie.toDomainMovie(), result)
         assertEquals(1, remote.getMovieDetailsCalls)
     }
 
     @Test
     fun `getMovieDetails should return null when remote fails`() = runTest {
+        // arrange
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieDetailsException = IllegalStateException())
         val repository = MoviesRepositoryImpl(remote, local)
 
+        // act
         val result = repository.getMovieDetails(20)
 
+        // assert
         assertNull(result)
         assertEquals(1, remote.getMovieDetailsCalls)
     }
 }
+
 
