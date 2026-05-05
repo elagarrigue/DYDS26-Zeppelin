@@ -16,9 +16,9 @@
 - Dependency wiring is manual through `MoviesDependencyInjector.getPopularMoviesViewModel()` and `MoviesDependencyInjector.getMovieDetailsViewModel()`.
 
 ## Data and Integration Boundaries
-- TMDB access is implemented in `data/external/tmdb/TMDB.kt` using a Ktor `HttpClient` configured with `ContentNegotiation`, `DefaultRequest`, and `HttpTimeout`.
+- TMDB access is implemented in `data/external/RemoteMoviesDataSourceImpl.kt` using a Ktor `HttpClient` configured with `ContentNegotiation`, `DefaultRequest`, and `HttpTimeout`.
 - API host and auth query parameter are injected globally (`api.themoviedb.org`, `api_key`).
-- API contracts (`RemoteMovie`, `RemoteResult`, `MoviesRemoteDataSource`) live in `data/external` and concrete TMDB models (`TMDBMovie`, `TMDBResult`) live in `data/external/tmdb`, mapping explicitly to `domain/entity/Movie.kt`.
+- API contracts (`RemoteMovie`, `RemoteResult`, `MoviesRemoteDataSource`) live in `data/external`, mapping explicitly to `domain/entity/Movie.kt`.
 - Image rendering uses Coil 3 (`AsyncImage`) and TMDB image URLs built in mapper (`w185` poster, `w780` backdrop).
 - Resource strings come from `composeApp/src/commonMain/composeResources/values/strings.xml`; generated `Res.string.*` is used in UI.
 
@@ -50,6 +50,6 @@
 - Preserve route constants/arguments in `Navigation.kt`; deep links rely on `detail/{movieId}` + `NavType.IntType`.
 - If changing API/domain fields, update both `RemoteMovie` serialization annotations and `toDomainMovie()` mapping.
 - If moving strings, keep `Res.string.*` usage consistent with Compose resources plugin generation.
-- Treat the current in-code API key in `data/external/tmdb/TMDB.kt` as sensitive; prefer environment/Gradle property injection for new work.
+- Treat the current in-code API key in `data/external/RemoteMoviesDataSourceImpl.kt` as sensitive; prefer environment/Gradle property injection for new work.
 - Existing tests are examples only (`composeApp/src/desktopTest/kotlin/TestExample.kt`); add feature-specific tests near changed behavior.
 - For any refactoring request, use only `.github/skills/refactoring-senior/SKILL.md`.
