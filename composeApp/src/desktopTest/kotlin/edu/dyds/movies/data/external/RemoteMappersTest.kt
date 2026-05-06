@@ -24,6 +24,18 @@ class RemoteMappersTest {
     }
 
     @Test
+    fun `toDomainMovie should map backdrop url when present`() = runTest {
+        // arrange
+        val remote = remoteMovie(id = 1, backdropPath = "/backdrop.png")
+
+        // act
+        val result = remote.toDomainMovie()
+
+        // assert
+        assertEquals("https://image.tmdb.org/t/p/w780/backdrop.png", result.backdrop)
+    }
+
+    @Test
     fun `toDomainMovieList should map all items`() = runTest {
         // arrange
         val remote = listOf(remoteMovie(id = 1), remoteMovie(id = 2))
@@ -36,4 +48,3 @@ class RemoteMappersTest {
         assertEquals(listOf(1, 2), mapped.map { it.id })
     }
 }
-
