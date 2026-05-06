@@ -25,6 +25,7 @@ class MoviesRepositoryImplTest {
 
         // assert
         assertEquals(localMovies, result)
+        assertEquals(1, local.getPopularMoviesCalls)
         assertEquals(0, remote.getPopularMoviesCalls)
         assertEquals(0, local.savePopularMoviesCalls)
     }
@@ -37,14 +38,32 @@ class MoviesRepositoryImplTest {
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
         val repository = MoviesRepositoryImpl(remote, local)
+        val expected = listOf(
+            movie(
+                id = 1,
+                title = "Remote 1",
+                overview = "Remote overview 1",
+                poster = "https://image.tmdb.org/t/p/w185/poster-1.png",
+                backdrop = "https://image.tmdb.org/t/p/w780/backdrop-1.png",
+                originalTitle = "Remote original 1"
+            ),
+            movie(
+                id = 2,
+                title = "Remote 2",
+                overview = "Remote overview 2",
+                poster = "https://image.tmdb.org/t/p/w185/poster-2.png",
+                backdrop = "https://image.tmdb.org/t/p/w780/backdrop-2.png",
+                originalTitle = "Remote original 2"
+            )
+        )
 
         // act
         val result = repository.getPopularMovies()
-        val expected = remoteResult.toDomainMovieList()
 
         // assert
         assertEquals(expected, result)
         assertEquals(1, remote.getPopularMoviesCalls)
+        assertEquals(1, local.getPopularMoviesCalls)
         assertEquals(1, local.savePopularMoviesCalls)
         assertEquals(expected, local.lastSaved)
     }
@@ -61,6 +80,7 @@ class MoviesRepositoryImplTest {
 
         // assert
         assertEquals(emptyList(), result)
+        assertEquals(1, local.getPopularMoviesCalls)
         assertEquals(1, remote.getPopularMoviesCalls)
         assertEquals(0, local.savePopularMoviesCalls)
     }
@@ -78,6 +98,7 @@ class MoviesRepositoryImplTest {
 
         // assert
         assertEquals(emptyList(), result)
+        assertEquals(1, local.getPopularMoviesCalls)
         assertEquals(1, remote.getPopularMoviesCalls)
         assertEquals(1, local.savePopularMoviesCalls)
         assertEquals(emptyList(), local.lastSaved)
@@ -90,12 +111,20 @@ class MoviesRepositoryImplTest {
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieDetailsResult = remoteMovie)
         val repository = MoviesRepositoryImpl(remote, local)
+        val expected = movie(
+            id = 20,
+            title = "Remote 20",
+            overview = "Remote overview 20",
+            poster = "https://image.tmdb.org/t/p/w185/poster-20.png",
+            backdrop = "https://image.tmdb.org/t/p/w780/backdrop-20.png",
+            originalTitle = "Remote original 20"
+        )
 
         // act
         val result = repository.getMovieDetails(20)
 
         // assert
-        assertEquals(remoteMovie.toDomainMovie(), result)
+        assertEquals(expected, result)
         assertEquals(1, remote.getMovieDetailsCalls)
     }
 
@@ -113,7 +142,33 @@ class MoviesRepositoryImplTest {
         assertNull(result)
         assertEquals(1, remote.getMovieDetailsCalls)
     }
+
+    @Test
+    fun `getPopularMovies should use cached data on second call`() = runTest {
+        val remoteMovies = listOf(remoteMovie(id = 1))
+        val remoteResult = remoteResult(results = remoteMovies)
+        val local = FakeLocalMoviesDataSource()
+        val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
+        val repository = MoviesRepositoryImpl(remote, local)
+        val expected = listOf(
+            movie(
+                id = 1,
+                title = "Remote 1",
+                overview = "Remote overview 1",
+                poster = "https://image.tmdb.org/t/p/w185/poster-1.png",
+                backdrop = "https://image.tmdb.org/t/p/w780/backdrop-1.png",
+                originalTitle = "Remote original 1"
+            )
+        )
+
+        val firstCall = repository.getPopularMovies()
+        val secondCall = repository.getPopularMovies()
+
+        assertEquals(expected, firstCall)
+        assertEquals(expected, secondCall)
+        assertEquals(1, remote.getPopularMoviesCalls)
+        assertEquals(2, local.getPopularMoviesCalls)
+        assertEquals(1, local.savePopularMoviesCalls)
+        assertEquals(expected, local.lastSaved)
+    }
 }
-
-
-
