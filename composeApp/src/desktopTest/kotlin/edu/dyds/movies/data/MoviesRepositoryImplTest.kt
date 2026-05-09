@@ -1,10 +1,8 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.fakes.FakeLocalMoviesDataSource
-import edu.dyds.movies.fakes.FakeRemoteMoviesDataSource
-import edu.dyds.movies.fakes.movie
-import edu.dyds.movies.fakes.remoteMovie
-import edu.dyds.movies.fakes.remoteResult
+import edu.dyds.movies.movie
+import edu.dyds.movies.remoteMovie
+import edu.dyds.movies.remoteResult
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

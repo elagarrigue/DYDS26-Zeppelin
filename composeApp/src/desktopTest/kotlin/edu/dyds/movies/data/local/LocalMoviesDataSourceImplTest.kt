@@ -1,6 +1,6 @@
 package edu.dyds.movies.data.local
 
-import edu.dyds.movies.fakes.movie
+import edu.dyds.movies.movie
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,7 +1,6 @@
 package edu.dyds.movies.domain.usecase
 
-import edu.dyds.movies.fakes.FakeMoviesRepository
-import edu.dyds.movies.fakes.movie
+import edu.dyds.movies.movie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
