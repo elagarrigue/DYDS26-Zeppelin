@@ -9,6 +9,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class MoviesRepositoryImplTest {
+    private fun expectedRemoteMovie(id: Int) = movie(
+        id = id,
+        title = "Remote $id",
+        overview = "Remote overview $id",
+        poster = "https://image.tmdb.org/t/p/w185/poster-$id.png",
+        backdrop = "https://image.tmdb.org/t/p/w780/backdrop-$id.png",
+        originalTitle = "Remote original $id"
+    )
 
     @Test
     fun `getPopularMovies should return local data and skip remote when cache is not empty`() = runTest {
@@ -36,24 +44,7 @@ class MoviesRepositoryImplTest {
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
         val repository = MoviesRepositoryImpl(remote, local)
-        val expected = listOf(
-            movie(
-                id = 1,
-                title = "Remote 1",
-                overview = "Remote overview 1",
-                poster = "https://image.tmdb.org/t/p/w185/poster-1.png",
-                backdrop = "https://image.tmdb.org/t/p/w780/backdrop-1.png",
-                originalTitle = "Remote original 1"
-            ),
-            movie(
-                id = 2,
-                title = "Remote 2",
-                overview = "Remote overview 2",
-                poster = "https://image.tmdb.org/t/p/w185/poster-2.png",
-                backdrop = "https://image.tmdb.org/t/p/w780/backdrop-2.png",
-                originalTitle = "Remote original 2"
-            )
-        )
+        val expected = listOf(expectedRemoteMovie(1), expectedRemoteMovie(2))
 
         // act
         val result = repository.getPopularMovies()
@@ -109,14 +100,7 @@ class MoviesRepositoryImplTest {
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieDetailsResult = remoteMovie)
         val repository = MoviesRepositoryImpl(remote, local)
-        val expected = movie(
-            id = 20,
-            title = "Remote 20",
-            overview = "Remote overview 20",
-            poster = "https://image.tmdb.org/t/p/w185/poster-20.png",
-            backdrop = "https://image.tmdb.org/t/p/w780/backdrop-20.png",
-            originalTitle = "Remote original 20"
-        )
+        val expected = expectedRemoteMovie(20)
 
         // act
         val result = repository.getMovieDetails(20)
@@ -143,25 +127,19 @@ class MoviesRepositoryImplTest {
 
     @Test
     fun `getPopularMovies should use cached data on second call`() = runTest {
+        // arrange
         val remoteMovies = listOf(remoteMovie(id = 1))
         val remoteResult = remoteResult(results = remoteMovies)
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
         val repository = MoviesRepositoryImpl(remote, local)
-        val expected = listOf(
-            movie(
-                id = 1,
-                title = "Remote 1",
-                overview = "Remote overview 1",
-                poster = "https://image.tmdb.org/t/p/w185/poster-1.png",
-                backdrop = "https://image.tmdb.org/t/p/w780/backdrop-1.png",
-                originalTitle = "Remote original 1"
-            )
-        )
+        val expected = listOf(expectedRemoteMovie(1))
 
+        // act
         val firstCall = repository.getPopularMovies()
         val secondCall = repository.getPopularMovies()
 
+        // assert
         assertEquals(expected, firstCall)
         assertEquals(expected, secondCall)
         assertEquals(1, remote.getPopularMoviesCalls)
