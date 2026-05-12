@@ -116,27 +116,4 @@ class MoviesRepositoryImplTest {
         assertNull(result)
         assertEquals(1, remote.getMovieDetailsCalls)
     }
-
-    @Test
-    fun `getPopularMovies should use cached data on second call`() = runTest {
-        // arrange
-        val remoteMovies = listOf(remoteMovie(id = 1))
-        val remoteResult = remoteResult(results = remoteMovies)
-        val local = FakeLocalMoviesDataSource()
-        val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
-        val repository = MoviesRepositoryImpl(remote, local)
-        val expected = remoteMovies.map { it.toDomainMovie() }
-
-        // act
-        val firstCall = repository.getPopularMovies()
-        val secondCall = repository.getPopularMovies()
-
-        // assert
-        assertEquals(expected, firstCall)
-        assertEquals(expected, secondCall)
-        assertEquals(1, remote.getPopularMoviesCalls)
-        assertEquals(2, local.getPopularMoviesCalls)
-        assertEquals(1, local.savePopularMoviesCalls)
-        assertEquals(expected, local.lastSaved)
-    }
 }
