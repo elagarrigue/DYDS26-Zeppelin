@@ -23,6 +23,11 @@ import kotlin.test.assertEquals
 class PopularMoviesViewModelTest {
     private lateinit var testDispatcher: TestDispatcher
 
+    private fun expectedQualifiedMovies(): List<QualifiedMovie> = listOf(
+        QualifiedMovie(movie = movie(id = 1), isGoodMovie = true),
+        QualifiedMovie(movie = movie(id = 2), isGoodMovie = false),
+    )
+
     @BeforeTest
     fun setUp() {
         testDispatcher = StandardTestDispatcher()
@@ -41,6 +46,8 @@ class PopularMoviesViewModelTest {
         val viewModel = PopularMoviesViewModel(useCase)
         val moviesStateFlow = viewModel.moviesStateFlow as MutableStateFlow<MoviesUiState>
 
+        // act (no action)
+
         // assert
         assertEquals(MoviesUiState(), moviesStateFlow.value)
     }
@@ -48,10 +55,7 @@ class PopularMoviesViewModelTest {
     @Test
     fun `getPopularMovies should emit loading before returning content`() = runTest(testDispatcher) {
         // arrange
-        val expectedMovies = listOf(
-            QualifiedMovie(movie = movie(id = 1), isGoodMovie = true),
-            QualifiedMovie(movie = movie(id = 2), isGoodMovie = false),
-        )
+        val expectedMovies = expectedQualifiedMovies()
         val returnSignal = CompletableDeferred<Unit>()
         val useCase = FakeGetPopularMoviesUseCase(
             popularMovies = expectedMovies,
@@ -68,26 +72,6 @@ class PopularMoviesViewModelTest {
         assertEquals(MoviesUiState(isLoading = true), moviesStateFlow.value)
 
         returnSignal.complete(Unit)
-        advanceUntilIdle()
-
-        // assert
-        assertEquals(MoviesUiState(isLoading = false, movies = expectedMovies), moviesStateFlow.value)
-        assertEquals(1, useCase.getPopularMoviesCalls)
-    }
-
-    @Test
-    fun `getPopularMovies should return movies with loading false after completion`() = runTest(testDispatcher) {
-        // arrange
-        val expectedMovies = listOf(
-            QualifiedMovie(movie = movie(id = 1), isGoodMovie = true),
-            QualifiedMovie(movie = movie(id = 2), isGoodMovie = false),
-        )
-        val useCase = FakeGetPopularMoviesUseCase(popularMovies = expectedMovies)
-        val viewModel = PopularMoviesViewModel(useCase)
-        val moviesStateFlow = viewModel.moviesStateFlow as MutableStateFlow<MoviesUiState>
-
-        // act
-        viewModel.getPopularMovies()
         advanceUntilIdle()
 
         // assert

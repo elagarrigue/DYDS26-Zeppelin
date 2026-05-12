@@ -40,6 +40,8 @@ class MovieDetailsViewModelTest {
         val viewModel = MovieDetailsViewModel(useCase)
         val movieDetailStateFlow = viewModel.movieDetailStateFlow as MutableStateFlow<MovieDetailUiState>
 
+        // act (no action)
+
         // assert
         assertEquals(MovieDetailUiState(), movieDetailStateFlow.value)
     }
@@ -70,24 +72,6 @@ class MovieDetailsViewModelTest {
 
         // assert
         assertEquals(MovieDetailUiState(isLoading = false, movie = expectedMovie), movieDetailStateFlow.value)
-    }
-
-    @Test
-    fun `getMovieDetails should return movie with loading false after completion`() = runTest(testDispatcher) {
-        // arrange
-        val expectedMovie = movie(id = 10)
-        val useCase = FakeGetMovieDetailsUseCase(movie = expectedMovie)
-        val viewModel = MovieDetailsViewModel(useCase)
-        val movieDetailStateFlow = viewModel.movieDetailStateFlow as MutableStateFlow<MovieDetailUiState>
-
-        // act
-        viewModel.getMovieDetails(10)
-        advanceUntilIdle()
-
-        // assert
-        assertEquals(MovieDetailUiState(isLoading = false, movie = expectedMovie), movieDetailStateFlow.value)
-        assertEquals(1, useCase.getMovieDetailsCalls)
-        assertEquals(10, useCase.lastRequestedId)
     }
 
     @Test
