@@ -4,17 +4,32 @@ import edu.dyds.movies.data.external.RemoteMovie
 import edu.dyds.movies.data.external.RemoteResult
 import edu.dyds.movies.domain.entity.Movie
 
+private object FakeMovieDefaults {
+    const val RELEASE_DATE = "2024-01-01"
+    const val ORIGINAL_LANGUAGE = "en"
+    const val POPULARITY = 10.0
+    const val VOTE_AVERAGE = 5.0
+
+    fun title(id: Int) = "Movie $id"
+    fun overview(id: Int) = "Overview $id"
+    fun originalTitle(id: Int) = "Original $id"
+    fun poster(id: Int) = "poster-$id"
+    fun backdrop(id: Int) = "backdrop-$id"
+    fun posterPath(id: Int) = "/poster-$id.png"
+    fun backdropPath(id: Int) = "/backdrop-$id.png"
+}
+
 fun movie(
     id: Int,
-    title: String = "Movie $id",
-    overview: String = "Overview $id",
-    releaseDate: String = "2024-01-01",
-    poster: String = "poster-$id",
-    backdrop: String? = "backdrop-$id",
-    originalTitle: String = "Original $id",
-    originalLanguage: String = "en",
-    popularity: Double = 10.0,
-    voteAverage: Double = 5.0,
+    title: String = FakeMovieDefaults.title(id),
+    overview: String = FakeMovieDefaults.overview(id),
+    releaseDate: String = FakeMovieDefaults.RELEASE_DATE,
+    poster: String = FakeMovieDefaults.poster(id),
+    backdrop: String? = FakeMovieDefaults.backdrop(id),
+    originalTitle: String = FakeMovieDefaults.originalTitle(id),
+    originalLanguage: String = FakeMovieDefaults.ORIGINAL_LANGUAGE,
+    popularity: Double = FakeMovieDefaults.POPULARITY,
+    voteAverage: Double = FakeMovieDefaults.VOTE_AVERAGE,
 ): Movie {
     return Movie(
         id = id,
@@ -32,15 +47,15 @@ fun movie(
 
 fun remoteMovie(
     id: Int,
-    title: String = "Remote $id",
-    overview: String = "Remote overview $id",
-    releaseDate: String = "2024-01-01",
-    posterPath: String = "/poster-$id.png",
-    backdropPath: String? = "/backdrop-$id.png",
-    originalTitle: String = "Remote original $id",
-    originalLanguage: String = "en",
-    popularity: Double = 10.0,
-    voteAverage: Double = 5.0,
+    title: String = FakeMovieDefaults.title(id),
+    overview: String = FakeMovieDefaults.overview(id),
+    releaseDate: String = FakeMovieDefaults.RELEASE_DATE,
+    posterPath: String = FakeMovieDefaults.posterPath(id),
+    backdropPath: String? = FakeMovieDefaults.backdropPath(id),
+    originalTitle: String = FakeMovieDefaults.originalTitle(id),
+    originalLanguage: String = FakeMovieDefaults.ORIGINAL_LANGUAGE,
+    popularity: Double = FakeMovieDefaults.POPULARITY,
+    voteAverage: Double = FakeMovieDefaults.VOTE_AVERAGE,
 ): RemoteMovie {
     return RemoteMovie(
         id = id,

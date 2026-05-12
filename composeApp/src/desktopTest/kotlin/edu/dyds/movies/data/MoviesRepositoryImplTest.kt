@@ -9,14 +9,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class MoviesRepositoryImplTest {
-    private fun expectedRemoteMovie(id: Int) = movie(
-        id = id,
-        title = "Remote $id",
-        overview = "Remote overview $id",
-        poster = "https://image.tmdb.org/t/p/w185/poster-$id.png",
-        backdrop = "https://image.tmdb.org/t/p/w780/backdrop-$id.png",
-        originalTitle = "Remote original $id"
-    )
 
     @Test
     fun `getPopularMovies should return local data and skip remote when cache is not empty`() = runTest {
@@ -44,7 +36,7 @@ class MoviesRepositoryImplTest {
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
         val repository = MoviesRepositoryImpl(remote, local)
-        val expected = listOf(expectedRemoteMovie(1), expectedRemoteMovie(2))
+        val expected = remoteMovies.map { it.toDomainMovie() }
 
         // act
         val result = repository.getPopularMovies()
@@ -100,7 +92,7 @@ class MoviesRepositoryImplTest {
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieDetailsResult = remoteMovie)
         val repository = MoviesRepositoryImpl(remote, local)
-        val expected = expectedRemoteMovie(20)
+        val expected = remoteMovie.toDomainMovie()
 
         // act
         val result = repository.getMovieDetails(20)
@@ -133,7 +125,7 @@ class MoviesRepositoryImplTest {
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
         val repository = MoviesRepositoryImpl(remote, local)
-        val expected = listOf(expectedRemoteMovie(1))
+        val expected = remoteMovies.map { it.toDomainMovie() }
 
         // act
         val firstCall = repository.getPopularMovies()
