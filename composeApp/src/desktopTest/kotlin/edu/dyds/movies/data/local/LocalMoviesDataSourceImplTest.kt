@@ -48,5 +48,22 @@ class LocalMoviesDataSourceImplTest {
         // assert
         assertEquals(listOf(movie(id = 1)), result)
     }
+
+    @Test
+    fun `getPopularMovies returned list mutation should not affect internal cache`() {
+        // arrange
+        val dataSource = LocalMoviesDataSourceImpl()
+        val original = listOf(movie(id = 1))
+        dataSource.savePopularMovies(original)
+
+        // act
+        val result = dataSource.getPopularMovies()
+        val mutableCopy = result.toMutableList()
+        mutableCopy.add(movie(id = 2))
+        val afterMutation = dataSource.getPopularMovies()
+
+        // assert
+        assertEquals(original, afterMutation)
+    }
 }
 
