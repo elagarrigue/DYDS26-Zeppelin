@@ -1,96 +1,73 @@
 package edu.dyds.movies.presentation.detail
 
+import app.cash.turbine.test
 import edu.dyds.movies.movie
 import edu.dyds.movies.presentation.FakeGetMovieDetailsUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.BeforeTest
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
-    private lateinit var testDispatcher: TestDispatcher
-
-    @BeforeTest
-    fun setUp() {
-        testDispatcher = StandardTestDispatcher()
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
 
     @Test
-    fun `initial state should be empty and not loading`() = runTest(testDispatcher) {
+    fun `initial state should be empty and not loading`() = runTest {
         // arrange
         val useCase = FakeGetMovieDetailsUseCase(movie = null)
         val viewModel = MovieDetailsViewModel(useCase)
-        val movieDetailStateFlow = viewModel.movieDetailStateFlow as MutableStateFlow<MovieDetailUiState>
+        var initialState: MovieDetailUiState? = null
 
-        // act (no action)
+        // act
+        viewModel.movieDetailStateFlow.test {
+            initialState = awaitItem()
+        }
 
         // assert
-        assertEquals(MovieDetailUiState(), movieDetailStateFlow.value)
+        assertEquals(MovieDetailUiState(), initialState)
     }
 
     @Test
-    fun `getMovieDetails should emit loading before returning content`() = runTest(testDispatcher) {
+    fun `getMovieDetails should emit loading before returning content`() = runTest {
         // arrange
         val expectedMovie = movie(id = 10)
-        val returnSignal = CompletableDeferred<Unit>()
-        val useCase = FakeGetMovieDetailsUseCase(
-            movie = expectedMovie,
-            returnSignal = returnSignal,
-        )
+        val useCase = FakeGetMovieDetailsUseCase(movie = expectedMovie)
         val viewModel = MovieDetailsViewModel(useCase)
-        val movieDetailStateFlow = viewModel.movieDetailStateFlow as MutableStateFlow<MovieDetailUiState>
+        var loadingState: MovieDetailUiState? = null
+        var finalState: MovieDetailUiState? = null
 
         // act
-        viewModel.getMovieDetails(10)
-        runCurrent()
+        viewModel.movieDetailStateFlow.test {
+            awaitItem()
+            viewModel.getMovieDetails(10)
+            loadingState = awaitItem()
+            finalState = awaitItem()
+        }
 
         // assert
-        assertEquals(MovieDetailUiState(isLoading = true), movieDetailStateFlow.value)
+        assertEquals(MovieDetailUiState(isLoading = true), loadingState)
+        assertEquals(MovieDetailUiState(isLoading = false, movie = expectedMovie), finalState)
         assertEquals(1, useCase.getMovieDetailsCalls)
         assertEquals(10, useCase.lastRequestedId)
-
-        returnSignal.complete(Unit)
-        advanceUntilIdle()
-
-        // assert
-        assertEquals(MovieDetailUiState(isLoading = false, movie = expectedMovie), movieDetailStateFlow.value)
     }
 
     @Test
-    fun `getMovieDetails should return null when movie not found`() = runTest(testDispatcher) {
+    fun `getMovieDetails should return null when movie not found`() = runTest {
         // arrange
         val useCase = FakeGetMovieDetailsUseCase(movie = null)
         val viewModel = MovieDetailsViewModel(useCase)
-        val movieDetailStateFlow = viewModel.movieDetailStateFlow as MutableStateFlow<MovieDetailUiState>
+        var finalState: MovieDetailUiState? = null
 
         // act
-        viewModel.getMovieDetails(999)
-        advanceUntilIdle()
+        viewModel.movieDetailStateFlow.test {
+            awaitItem()
+            viewModel.getMovieDetails(999)
+            awaitItem()
+            finalState = awaitItem()
+        }
 
         // assert
-        assertEquals(MovieDetailUiState(isLoading = false, movie = null), movieDetailStateFlow.value)
+        assertEquals(MovieDetailUiState(isLoading = false, movie = null), finalState)
         assertEquals(1, useCase.getMovieDetailsCalls)
         assertEquals(999, useCase.lastRequestedId)
     }
 }
-
-
 

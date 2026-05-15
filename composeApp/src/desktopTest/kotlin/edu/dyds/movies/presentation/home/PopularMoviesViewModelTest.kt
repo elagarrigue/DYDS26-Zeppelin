@@ -1,97 +1,76 @@
 package edu.dyds.movies.presentation.home
 
+import app.cash.turbine.test
 import edu.dyds.movies.domain.entity.QualifiedMovie
 import edu.dyds.movies.movie
 import edu.dyds.movies.presentation.FakeGetPopularMoviesUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.BeforeTest
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class PopularMoviesViewModelTest {
-    private lateinit var testDispatcher: TestDispatcher
 
     private fun expectedQualifiedMovies(): List<QualifiedMovie> = listOf(
         QualifiedMovie(movie = movie(id = 1), isGoodMovie = true),
         QualifiedMovie(movie = movie(id = 2), isGoodMovie = false),
     )
 
-    @BeforeTest
-    fun setUp() {
-        testDispatcher = StandardTestDispatcher()
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun `initial state should be empty and not loading`() = runTest(testDispatcher) {
+    fun `initial state should be empty and not loading`() = runTest {
         // arrange
         val useCase = FakeGetPopularMoviesUseCase(popularMovies = emptyList())
         val viewModel = PopularMoviesViewModel(useCase)
-        val moviesStateFlow = viewModel.moviesStateFlow as MutableStateFlow<MoviesUiState>
+        var initialState: MoviesUiState? = null
 
-        // act (no action)
+        // act
+        viewModel.moviesStateFlow.test {
+            initialState = awaitItem()
+        }
 
         // assert
-        assertEquals(MoviesUiState(), moviesStateFlow.value)
+        assertEquals(MoviesUiState(), initialState)
     }
 
     @Test
-    fun `getPopularMovies should emit loading before returning content`() = runTest(testDispatcher) {
+    fun `getPopularMovies should emit loading before returning content`() = runTest {
         // arrange
         val expectedMovies = expectedQualifiedMovies()
-        val returnSignal = CompletableDeferred<Unit>()
-        val useCase = FakeGetPopularMoviesUseCase(
-            popularMovies = expectedMovies,
-            returnSignal = returnSignal,
-        )
+        val useCase = FakeGetPopularMoviesUseCase(popularMovies = expectedMovies)
         val viewModel = PopularMoviesViewModel(useCase)
-        val moviesStateFlow = viewModel.moviesStateFlow as MutableStateFlow<MoviesUiState>
+        var loadingState: MoviesUiState? = null
+        var finalState: MoviesUiState? = null
 
         // act
-        viewModel.getPopularMovies()
-        runCurrent()
+        viewModel.moviesStateFlow.test {
+            awaitItem()
+            viewModel.getPopularMovies()
+            loadingState = awaitItem()
+            finalState = awaitItem()
+        }
 
         // assert
-        assertEquals(MoviesUiState(isLoading = true), moviesStateFlow.value)
-
-        returnSignal.complete(Unit)
-        advanceUntilIdle()
-
-        // assert
-        assertEquals(MoviesUiState(isLoading = false, movies = expectedMovies), moviesStateFlow.value)
+        assertEquals(MoviesUiState(isLoading = true), loadingState)
+        assertEquals(MoviesUiState(isLoading = false, movies = expectedMovies), finalState)
         assertEquals(1, useCase.getPopularMoviesCalls)
     }
 
     @Test
-    fun `getPopularMovies should return empty list when no movies available`() = runTest(testDispatcher) {
+    fun `getPopularMovies should return empty list when no movies available`() = runTest {
         // arrange
         val useCase = FakeGetPopularMoviesUseCase(popularMovies = emptyList())
         val viewModel = PopularMoviesViewModel(useCase)
-        val moviesStateFlow = viewModel.moviesStateFlow as MutableStateFlow<MoviesUiState>
+        var finalState: MoviesUiState? = null
 
         // act
-        viewModel.getPopularMovies()
-        advanceUntilIdle()
+        viewModel.moviesStateFlow.test {
+            awaitItem()
+            viewModel.getPopularMovies()
+            awaitItem()
+            finalState = awaitItem()
+        }
 
         // assert
-        assertEquals(MoviesUiState(isLoading = false, movies = emptyList()), moviesStateFlow.value)
+        assertEquals(MoviesUiState(isLoading = false, movies = emptyList()), finalState)
         assertEquals(1, useCase.getPopularMoviesCalls)
     }
 }
