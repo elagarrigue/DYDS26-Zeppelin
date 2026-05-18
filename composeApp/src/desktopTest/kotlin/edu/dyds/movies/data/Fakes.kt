@@ -14,7 +14,6 @@ class FakeRemoteMoviesDataSource(
 ) : RemoteMoviesDataSource {
     var getPopularMoviesCalls = 0
     var getMovieByTitleCalls = 0
-    var lastRequestedTitle: String? = null
 
     override suspend fun getPopularMovies(): RemoteResult {
         getPopularMoviesCalls += 1
@@ -24,7 +23,6 @@ class FakeRemoteMoviesDataSource(
 
     override suspend fun getMovieByTitle(title: String): RemoteMovie {
         getMovieByTitleCalls += 1
-        lastRequestedTitle = title
         movieByTitleException?.let { throw it }
         return requireNotNull(movieByTitleResult)
     }

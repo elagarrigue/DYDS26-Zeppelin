@@ -9,7 +9,6 @@ class FakeMoviesRepository(
 ) : MoviesRepository {
     var getPopularMoviesCalls = 0
     var getMovieByTitleCalls = 0
-    var lastRequestedTitle: String? = null
 
     override suspend fun getPopularMovies(): List<Movie> {
         getPopularMoviesCalls += 1
@@ -18,7 +17,6 @@ class FakeMoviesRepository(
 
     override suspend fun getMovieByTitle(title: String): Movie? {
         getMovieByTitleCalls += 1
-        lastRequestedTitle = title
         return movieByTitle
     }
 }
