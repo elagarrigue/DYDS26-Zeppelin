@@ -8,12 +8,13 @@ import edu.dyds.movies.domain.entity.Movie
 
 class FakeRemoteMoviesDataSource(
     var popularMoviesResult: RemoteResult? = null,
-    var movieDetailsResult: RemoteMovie? = null,
+    var movieByTitleResult: RemoteMovie? = null,
     var popularMoviesException: Exception? = null,
-    var movieDetailsException: Exception? = null,
+    var movieByTitleException: Exception? = null,
 ) : RemoteMoviesDataSource {
     var getPopularMoviesCalls = 0
-    var getMovieDetailsCalls = 0
+    var getMovieByTitleCalls = 0
+    var lastRequestedTitle: String? = null
 
     override suspend fun getPopularMovies(): RemoteResult {
         getPopularMoviesCalls += 1
@@ -21,10 +22,11 @@ class FakeRemoteMoviesDataSource(
         return requireNotNull(popularMoviesResult)
     }
 
-    override suspend fun getMovieDetails(id: Int): RemoteMovie {
-        getMovieDetailsCalls += 1
-        movieDetailsException?.let { throw it }
-        return requireNotNull(movieDetailsResult)
+    override suspend fun getMovieByTitle(title: String): RemoteMovie {
+        getMovieByTitleCalls += 1
+        lastRequestedTitle = title
+        movieByTitleException?.let { throw it }
+        return requireNotNull(movieByTitleResult)
     }
 }
 
