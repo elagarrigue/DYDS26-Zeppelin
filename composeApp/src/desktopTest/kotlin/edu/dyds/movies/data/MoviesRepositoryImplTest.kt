@@ -16,7 +16,7 @@ class MoviesRepositoryImplTest {
         val localMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeLocalMoviesDataSource(initialMovies = localMovies)
         val remote = FakeRemoteMoviesDataSource(popularMoviesException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -35,7 +35,7 @@ class MoviesRepositoryImplTest {
         val remoteResult = remoteResult(results = remoteMovies)
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
         val expected = remoteMovies.map { it.toDomainMovie() }
 
         // act
@@ -54,7 +54,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -72,7 +72,7 @@ class MoviesRepositoryImplTest {
         val remoteResult = remoteResult(results = emptyList())
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -91,7 +91,7 @@ class MoviesRepositoryImplTest {
         val remoteMovie = remoteMovie(id = 20)
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieByTitleResult = remoteMovie)
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
         val expected = remoteMovie.toDomainMovie()
 
         // act
@@ -107,7 +107,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieByTitleException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getMovieByTitle("Unknown")
@@ -122,7 +122,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(movieByTitleException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getMovieByTitle("Missing movie")

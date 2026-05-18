@@ -1,27 +1,28 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.data.external.RemoteMovie
-import edu.dyds.movies.data.external.RemoteMoviesDataSource
-import edu.dyds.movies.data.external.RemoteResult
+import edu.dyds.movies.data.external.tmdb.TMDBRemoteMovie
+import edu.dyds.movies.data.external.PopularMoviesDataSource
+import edu.dyds.movies.data.external.MovieDetailDataSource
+import edu.dyds.movies.data.external.tmdb.TMDBRemoteResult
 import edu.dyds.movies.data.local.LocalMoviesDataSource
 import edu.dyds.movies.domain.entity.Movie
 
 class FakeRemoteMoviesDataSource(
-    var popularMoviesResult: RemoteResult? = null,
-    var movieByTitleResult: RemoteMovie? = null,
+    var popularMoviesResult: TMDBRemoteResult? = null,
+    var movieByTitleResult: TMDBRemoteMovie? = null,
     var popularMoviesException: Exception? = null,
     var movieByTitleException: Exception? = null,
-) : RemoteMoviesDataSource {
+) : PopularMoviesDataSource, MovieDetailDataSource {
     var getPopularMoviesCalls = 0
     var getMovieByTitleCalls = 0
 
-    override suspend fun getPopularMovies(): RemoteResult {
+    override suspend fun getPopularMovies(): TMDBRemoteResult {
         getPopularMoviesCalls += 1
         popularMoviesException?.let { throw it }
         return requireNotNull(popularMoviesResult)
     }
 
-    override suspend fun getMovieByTitle(title: String): RemoteMovie {
+    override suspend fun getMovieByTitle(title: String): TMDBRemoteMovie {
         getMovieByTitleCalls += 1
         movieByTitleException?.let { throw it }
         return requireNotNull(movieByTitleResult)

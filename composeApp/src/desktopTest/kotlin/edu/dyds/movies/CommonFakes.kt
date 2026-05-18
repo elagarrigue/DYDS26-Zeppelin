@@ -1,7 +1,7 @@
 package edu.dyds.movies
 
-import edu.dyds.movies.data.external.RemoteMovie
-import edu.dyds.movies.data.external.RemoteResult
+import edu.dyds.movies.data.external.tmdb.TMDBRemoteMovie
+import edu.dyds.movies.data.external.tmdb.TMDBRemoteResult
 import edu.dyds.movies.domain.entity.Movie
 
 private object FakeMovieDefaults {
@@ -56,8 +56,8 @@ fun remoteMovie(
     originalLanguage: String = FakeMovieDefaults.ORIGINAL_LANGUAGE,
     popularity: Double = FakeMovieDefaults.POPULARITY,
     voteAverage: Double = FakeMovieDefaults.VOTE_AVERAGE,
-): RemoteMovie {
-    return RemoteMovie(
+): TMDBRemoteMovie {
+    return TMDBRemoteMovie(
         id = id,
         title = title,
         overview = overview,
@@ -73,11 +73,11 @@ fun remoteMovie(
 
 fun remoteResult(
     page: Int = 1,
-    results: List<RemoteMovie>,
+    results: List<TMDBRemoteMovie>,
     totalPages: Int = 1,
     totalResults: Int = results.size,
-): RemoteResult {
-    return RemoteResult(
+): TMDBRemoteResult {
+    return TMDBRemoteResult(
         page = page,
         results = results,
         totalPages = totalPages,
