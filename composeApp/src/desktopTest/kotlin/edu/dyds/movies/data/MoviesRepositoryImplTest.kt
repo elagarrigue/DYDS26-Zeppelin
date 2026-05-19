@@ -1,7 +1,6 @@
 package edu.dyds.movies.data
 
 import edu.dyds.movies.movie
-import edu.dyds.movies.remoteMovie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -85,14 +84,14 @@ class MoviesRepositoryImplTest {
     @Test
     fun `getMovieByTitle should return mapped movie when remote succeeds`() = runTest {
         // arrange
-        val remoteMovie = remoteMovie(id = 20)
+        val expectedMovie = movie(id = 20)
         val local = FakeMoviesLocalSource()
-        val remote = FakeMoviesExternalSource(movieByTitleResult = remoteMovie.toDomainMovie())
+        val remote = FakeMoviesExternalSource(movieByTitleResult = expectedMovie)
         val repository = MoviesRepositoryImpl(remote, remote, local)
-        val expected = remoteMovie.toDomainMovie()
+        val expected = expectedMovie
 
         // act
-        val result = repository.getMovieByTitle(remoteMovie.title)
+        val result = repository.getMovieByTitle(expectedMovie.title)
 
         // assert
         assertEquals(expected, result)
