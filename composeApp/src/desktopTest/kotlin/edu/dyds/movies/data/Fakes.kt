@@ -5,7 +5,7 @@ import edu.dyds.movies.data.external.MovieDetailExternalSource
 import edu.dyds.movies.data.local.MoviesLocalSource
 import edu.dyds.movies.domain.entity.Movie
 
-class FakeRemoteMoviesExternalSource(
+class FakeMoviesExternalSource(
     var popularMoviesResult: List<Movie>? = null,
     var movieByTitleResult: Movie? = null,
     var popularMoviesException: Exception? = null,
