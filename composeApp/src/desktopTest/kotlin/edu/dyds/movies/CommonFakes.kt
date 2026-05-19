@@ -71,17 +71,3 @@ fun remoteMovie(
     )
 }
 
-fun remoteResult(
-    page: Int = 1,
-    results: List<TMDBRemoteMovie>,
-    totalPages: Int = 1,
-    totalResults: Int = results.size,
-): TMDBRemoteResult {
-    return TMDBRemoteResult(
-        page = page,
-        results = results,
-        totalPages = totalPages,
-        totalResults = totalResults
-    )
-}
-

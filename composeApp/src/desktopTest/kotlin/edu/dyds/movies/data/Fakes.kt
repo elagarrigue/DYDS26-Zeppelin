@@ -1,37 +1,35 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.data.external.tmdb.TMDBRemoteMovie
-import edu.dyds.movies.data.external.PopularMoviesDataSource
-import edu.dyds.movies.data.external.MovieDetailDataSource
-import edu.dyds.movies.data.external.tmdb.TMDBRemoteResult
-import edu.dyds.movies.data.local.LocalMoviesDataSource
+import edu.dyds.movies.data.external.PopularMoviesExternalSource
+import edu.dyds.movies.data.external.MovieDetailExternalSource
+import edu.dyds.movies.data.local.MoviesLocalSource
 import edu.dyds.movies.domain.entity.Movie
 
-class FakeRemoteMoviesDataSource(
-    var popularMoviesResult: TMDBRemoteResult? = null,
-    var movieByTitleResult: TMDBRemoteMovie? = null,
+class FakeRemoteMoviesExternalSource(
+    var popularMoviesResult: List<Movie>? = null,
+    var movieByTitleResult: Movie? = null,
     var popularMoviesException: Exception? = null,
     var movieByTitleException: Exception? = null,
-) : PopularMoviesDataSource, MovieDetailDataSource {
+) : PopularMoviesExternalSource, MovieDetailExternalSource {
     var getPopularMoviesCalls = 0
     var getMovieByTitleCalls = 0
 
-    override suspend fun getPopularMovies(): TMDBRemoteResult {
+    override suspend fun getPopularMovies(): List<Movie> {
         getPopularMoviesCalls += 1
         popularMoviesException?.let { throw it }
         return requireNotNull(popularMoviesResult)
     }
 
-    override suspend fun getMovieByTitle(title: String): TMDBRemoteMovie {
+    override suspend fun getMovieByTitle(title: String): Movie {
         getMovieByTitleCalls += 1
         movieByTitleException?.let { throw it }
         return requireNotNull(movieByTitleResult)
     }
 }
 
-class FakeLocalMoviesDataSource(
+class FakeMoviesLocalSource(
     initialMovies: List<Movie> = emptyList(),
-) : LocalMoviesDataSource {
+) : MoviesLocalSource {
     private val cache = initialMovies.toMutableList()
 
     var getPopularMoviesCalls = 0

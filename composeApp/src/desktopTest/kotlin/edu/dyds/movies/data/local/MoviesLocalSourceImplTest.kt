@@ -4,12 +4,12 @@ import edu.dyds.movies.movie
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LocalMoviesDataSourceImplTest {
+class MoviesLocalSourceImplTest {
 
     @Test
     fun `getPopularMovies should return empty list when cache is empty`() {
         // arrange
-        val dataSource = LocalMoviesDataSourceImpl()
+        val dataSource = MoviesLocalSourceImpl()
 
         // act
         val result = dataSource.getPopularMovies()
@@ -21,7 +21,7 @@ class LocalMoviesDataSourceImplTest {
     @Test
     fun `savePopularMovies should replace cached movies`() {
         // arrange
-        val dataSource = LocalMoviesDataSourceImpl()
+        val dataSource = MoviesLocalSourceImpl()
         val first = listOf(movie(id = 1), movie(id = 2))
         val second = listOf(movie(id = 3))
 
@@ -37,7 +37,7 @@ class LocalMoviesDataSourceImplTest {
     @Test
     fun `savePopularMovies should not be affected by external list mutation`() {
         // arrange
-        val dataSource = LocalMoviesDataSourceImpl()
+        val dataSource = MoviesLocalSourceImpl()
         val movies = mutableListOf(movie(id = 1))
 
         // act
@@ -52,7 +52,7 @@ class LocalMoviesDataSourceImplTest {
     @Test
     fun `getPopularMovies returned list mutation should not affect internal cache`() {
         // arrange
-        val dataSource = LocalMoviesDataSourceImpl()
+        val dataSource = MoviesLocalSourceImpl()
         val original = listOf(movie(id = 1))
         dataSource.savePopularMovies(original)
 

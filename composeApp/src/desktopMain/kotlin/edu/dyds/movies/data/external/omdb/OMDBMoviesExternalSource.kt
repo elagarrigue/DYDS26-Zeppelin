@@ -1,7 +1,7 @@
-package edu.dyds.movies.data.external.tmdb
+package edu.dyds.movies.data.external.omdb
 
-import edu.dyds.movies.data.external.MovieDetailDataSource
-import edu.dyds.movies.data.external.PopularMoviesDataSource
+import edu.dyds.movies.data.external.MovieDetailExternalSource
+import edu.dyds.movies.domain.entity.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
@@ -12,9 +12,9 @@ import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-private const val API_KEY = "d18da1b5da16397619c688b0263cd281"
+private const val OMDB_API_KEY = "a96e7f78"
 
-class TMDBMoviesDataSource : PopularMoviesDataSource, MovieDetailDataSource {
+internal class OMDBMoviesExternalSource : MovieDetailExternalSource {
     private val httpClient =
         HttpClient {
             install(ContentNegotiation) {
@@ -25,8 +25,8 @@ class TMDBMoviesDataSource : PopularMoviesDataSource, MovieDetailDataSource {
             install(DefaultRequest) {
                 url {
                     protocol = URLProtocol.HTTPS
-                    host = "api.themoviedb.org"
-                    parameters.append("api_key", API_KEY)
+                    host = "www.omdbapi.com"
+                    parameters.append("apikey", OMDB_API_KEY)
                 }
             }
             install(HttpTimeout) {
@@ -34,11 +34,11 @@ class TMDBMoviesDataSource : PopularMoviesDataSource, MovieDetailDataSource {
             }
         }
 
-    override suspend fun getPopularMovies(): TMDBRemoteResult =
-        httpClient.get("/3/discover/movie?sort_by=popularity.desc").body()
+    override suspend fun getMovieByTitle(title: String): Movie =
+        getOMDBMovieDetails(title).toDomainMovie()
 
-    override suspend fun getMovieByTitle(title: String): TMDBRemoteMovie =
-        httpClient.get("/3/search/movie") {
-            url { parameters.append("query", title) }
-        }.body<TMDBRemoteResult>().results.first()
+    private suspend fun getOMDBMovieDetails(title: String): OMDBRemoteMovie =
+        httpClient.get("/") {
+            url { parameters.append("t", title) }
+        }.body()
 }
