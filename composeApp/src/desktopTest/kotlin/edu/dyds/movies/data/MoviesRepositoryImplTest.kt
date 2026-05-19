@@ -16,7 +16,7 @@ class MoviesRepositoryImplTest {
         val localMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeLocalMoviesDataSource(initialMovies = localMovies)
         val remote = FakeRemoteMoviesDataSource(popularMoviesException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -35,7 +35,7 @@ class MoviesRepositoryImplTest {
         val remoteResult = remoteResult(results = remoteMovies)
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
         val expected = remoteMovies.map { it.toDomainMovie() }
 
         // act
@@ -54,7 +54,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -72,7 +72,7 @@ class MoviesRepositoryImplTest {
         val remoteResult = remoteResult(results = emptyList())
         val local = FakeLocalMoviesDataSource()
         val remote = FakeRemoteMoviesDataSource(popularMoviesResult = remoteResult)
-        val repository = MoviesRepositoryImpl(remote, local)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -86,34 +86,49 @@ class MoviesRepositoryImplTest {
     }
 
     @Test
-    fun `getMovieDetails should return mapped movie when remote succeeds`() = runTest {
+    fun `getMovieByTitle should return mapped movie when remote succeeds`() = runTest {
         // arrange
         val remoteMovie = remoteMovie(id = 20)
         val local = FakeLocalMoviesDataSource()
-        val remote = FakeRemoteMoviesDataSource(movieDetailsResult = remoteMovie)
-        val repository = MoviesRepositoryImpl(remote, local)
+        val remote = FakeRemoteMoviesDataSource(movieByTitleResult = remoteMovie)
+        val repository = MoviesRepositoryImpl(remote, remote, local)
         val expected = remoteMovie.toDomainMovie()
 
         // act
-        val result = repository.getMovieDetails(20)
+        val result = repository.getMovieByTitle(remoteMovie.title)
 
         // assert
         assertEquals(expected, result)
-        assertEquals(1, remote.getMovieDetailsCalls)
+        assertEquals(1, remote.getMovieByTitleCalls)
     }
 
     @Test
-    fun `getMovieDetails should return null when remote fails`() = runTest {
+    fun `getMovieByTitle should return null when remote fails`() = runTest {
         // arrange
         val local = FakeLocalMoviesDataSource()
-        val remote = FakeRemoteMoviesDataSource(movieDetailsException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, local)
+        val remote = FakeRemoteMoviesDataSource(movieByTitleException = IllegalStateException())
+        val repository = MoviesRepositoryImpl(remote, remote, local)
 
         // act
-        val result = repository.getMovieDetails(20)
+        val result = repository.getMovieByTitle("Unknown")
 
         // assert
         assertNull(result)
-        assertEquals(1, remote.getMovieDetailsCalls)
+        assertEquals(1, remote.getMovieByTitleCalls)
+    }
+
+    @Test
+    fun `getMovieDetails should return null when search has no results`() = runTest {
+        // arrange
+        val local = FakeLocalMoviesDataSource()
+        val remote = FakeRemoteMoviesDataSource(movieByTitleException = IllegalStateException())
+        val repository = MoviesRepositoryImpl(remote, remote, local)
+
+        // act
+        val result = repository.getMovieByTitle("Missing movie")
+
+        // assert
+        assertNull(result)
+        assertEquals(1, remote.getMovieByTitleCalls)
     }
 }

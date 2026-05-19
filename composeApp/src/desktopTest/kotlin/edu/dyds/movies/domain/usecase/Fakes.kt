@@ -5,18 +5,18 @@ import edu.dyds.movies.domain.repository.MoviesRepository
 
 class FakeMoviesRepository(
     private val popularMovies: List<Movie> = emptyList(),
-    private val movieDetails: Movie? = null,
+    private val movieByTitle: Movie? = null,
 ) : MoviesRepository {
     var getPopularMoviesCalls = 0
-    var getMovieDetailsCalls = 0
+    var getMovieByTitleCalls = 0
 
     override suspend fun getPopularMovies(): List<Movie> {
         getPopularMoviesCalls += 1
         return popularMovies
     }
 
-    override suspend fun getMovieDetails(id: Int): Movie? {
-        getMovieDetailsCalls += 1
-        return movieDetails
+    override suspend fun getMovieByTitle(title: String): Movie? {
+        getMovieByTitleCalls += 1
+        return movieByTitle
     }
 }

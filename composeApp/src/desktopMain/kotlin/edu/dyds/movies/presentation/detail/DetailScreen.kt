@@ -9,10 +9,10 @@ import edu.dyds.movies.presentation.detail.components.DetailContent
 import edu.dyds.movies.presentation.detail.components.DetailTopBar
 
 @Composable
-fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
+fun DetailRoute(viewModel: MovieDetailsViewModel, title: String, onBack: () -> Unit) {
 
-    LaunchedEffect(id) {
-        viewModel.getMovieDetails(id)
+    LaunchedEffect(title) {
+        viewModel.getMovieDetails(title)
     }
 
     val state by viewModel.movieDetailStateFlow.collectAsState(MovieDetailUiState())
@@ -20,7 +20,7 @@ fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
     DetailScreen(
         state = state,
         onBack = onBack,
-        onRetry = { viewModel.getMovieDetails(id) }
+        onRetry = { viewModel.getMovieDetails(title) }
     )
 }
 

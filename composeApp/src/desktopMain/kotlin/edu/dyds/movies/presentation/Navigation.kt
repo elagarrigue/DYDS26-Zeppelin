@@ -12,10 +12,21 @@ import edu.dyds.movies.di.MoviesDependencyInjector.getMovieDetailsViewModel
 import edu.dyds.movies.di.MoviesDependencyInjector.getPopularMoviesViewModel
 import edu.dyds.movies.presentation.detail.DetailRoute
 import edu.dyds.movies.presentation.home.HomeRoute
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 private const val HOME = "home"
 private const val DETAIL = "detail"
-private const val MOVIE_ID = "movieId"
+private const val MOVIE_TITLE = "movieTitle"
+
+private fun encodeRouteValue(value: String): String {
+    return URLEncoder.encode(value, StandardCharsets.UTF_8.name())
+}
+
+private fun decodeRouteValue(value: String): String {
+    return URLDecoder.decode(value, StandardCharsets.UTF_8.name())
+}
 
 @Composable
 fun Navigation() {
@@ -34,7 +45,7 @@ private fun NavGraphBuilder.homeDestination(
         HomeRoute(
             viewModel = getPopularMoviesViewModel(),
             onGoodMovieClick = {
-                navController.navigate("$DETAIL/${it.id}")
+                navController.navigate("$DETAIL/${encodeRouteValue(it.title)}")
             }
         )
     }
@@ -44,13 +55,17 @@ private fun NavGraphBuilder.detailDestination(
     navController: NavHostController,
 ) {
     composable(
-        route = "$DETAIL/{$MOVIE_ID}",
-        arguments = listOf(navArgument(MOVIE_ID) { type = NavType.IntType })
+        route = "$DETAIL/{$MOVIE_TITLE}",
+        arguments = listOf(navArgument(MOVIE_TITLE) { type = NavType.StringType })
     ) { backstackEntry ->
-        val movieId = backstackEntry.arguments?.getInt(MOVIE_ID)
+        val movieTitle = backstackEntry.arguments?.getString(MOVIE_TITLE)
 
-        movieId?.let {
-            DetailRoute(viewModel = getMovieDetailsViewModel(), id = it, onBack = { navController.popBackStack() })
+        movieTitle?.let {
+            DetailRoute(
+                viewModel = getMovieDetailsViewModel(),
+                title = decodeRouteValue(it),
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }

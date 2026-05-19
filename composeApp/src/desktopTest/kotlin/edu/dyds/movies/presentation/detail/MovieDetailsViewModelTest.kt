@@ -37,7 +37,7 @@ class MovieDetailsViewModelTest {
         // act
         viewModel.movieDetailStateFlow.test {
             awaitItem()
-            viewModel.getMovieDetails(10)
+            viewModel.getMovieDetails(expectedMovie.title)
             loadingState = awaitItem()
             finalState = awaitItem()
         }
@@ -46,12 +46,13 @@ class MovieDetailsViewModelTest {
         assertEquals(MovieDetailUiState(isLoading = true), loadingState)
         assertEquals(MovieDetailUiState(isLoading = false, movie = expectedMovie), finalState)
         assertEquals(1, useCase.getMovieDetailsCalls)
-        assertEquals(10, useCase.lastRequestedId)
+        assertEquals(expectedMovie.title, useCase.lastRequestedTitle)
     }
 
     @Test
     fun `getMovieDetails should return null when movie not found`() = runTest {
         // arrange
+        val title = "Unknown"
         val useCase = FakeGetMovieDetailsUseCase(movie = null)
         val viewModel = MovieDetailsViewModel(useCase)
         var finalState: MovieDetailUiState? = null
@@ -59,7 +60,7 @@ class MovieDetailsViewModelTest {
         // act
         viewModel.movieDetailStateFlow.test {
             awaitItem()
-            viewModel.getMovieDetails(999)
+            viewModel.getMovieDetails(title)
             awaitItem()
             finalState = awaitItem()
         }
@@ -67,7 +68,7 @@ class MovieDetailsViewModelTest {
         // assert
         assertEquals(MovieDetailUiState(isLoading = false, movie = null), finalState)
         assertEquals(1, useCase.getMovieDetailsCalls)
-        assertEquals(999, useCase.lastRequestedId)
+        assertEquals(title, useCase.lastRequestedTitle)
     }
 }
 
