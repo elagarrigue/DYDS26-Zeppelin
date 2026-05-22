@@ -30,9 +30,9 @@ class MoviesRepositoryImplTest {
     @Test
     fun `getPopularMovies should fetch remote data and cache when local is empty`() = runTest {
         // arrange
-        val remoteMovies = listOf(movie(id = 1), movie(id = 2))
+        val expectedMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeMoviesLocalSource()
-        val popularRemote = FakePopularMoviesExternalSource(result = remoteMovies)
+        val popularRemote = FakePopularMoviesExternalSource(result = expectedMovies)
         val detailRemote = FakeMovieDetailExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
@@ -40,11 +40,11 @@ class MoviesRepositoryImplTest {
         val result = repository.getPopularMovies()
 
         // assert
-        assertEquals(remoteMovies, result)
+        assertEquals(expectedMovies, result)
         assertEquals(1, popularRemote.getPopularMoviesCalls)
         assertEquals(1, local.getPopularMoviesCalls)
         assertEquals(1, local.savePopularMoviesCalls)
-        assertEquals(remoteMovies, local.lastSaved)
+        assertEquals(expectedMovies, local.lastSaved)
     }
 
     @Test
@@ -118,7 +118,7 @@ class MoviesRepositoryImplTest {
     }
 
     @Test
-    fun `getMovieDetails should return null when search has no results`() = runTest {
+    fun `getMovieByTitle should return null when search has no results`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource()
