@@ -9,14 +9,14 @@ import edu.dyds.movies.domain.repository.MoviesRepository
 class MoviesRepositoryImpl(
     private val popularMoviesExternalSource: PopularMoviesExternalSource,
     private val movieDetailExternalSource: MovieDetailExternalSource,
-    private val localMoviesDataSource: MoviesLocalSource
+    private val localMoviesSource: MoviesLocalSource
 ): MoviesRepository {
 
     override suspend fun getPopularMovies(): List<Movie> {
-        return localMoviesDataSource.getPopularMovies().ifEmpty {
+        return localMoviesSource.getPopularMovies().ifEmpty {
             try {
                 val movies = popularMoviesExternalSource.getPopularMovies()
-                localMoviesDataSource.savePopularMovies(movies)
+                localMoviesSource.savePopularMovies(movies)
                 movies
             } catch (_: Exception) {
                 emptyList()
