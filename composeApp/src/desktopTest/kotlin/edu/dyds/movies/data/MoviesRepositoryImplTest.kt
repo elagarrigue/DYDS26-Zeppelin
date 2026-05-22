@@ -13,8 +13,9 @@ class MoviesRepositoryImplTest {
         // arrange
         val localMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeMoviesLocalSource(initialMovies = localMovies)
-        val remote = FakeMoviesExternalSource(popularMoviesException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, remote, local)
+        val popularRemote = FakePopularMoviesExternalSource(exception = IllegalStateException())
+        val detailRemote = FakeMovieDetailExternalSource()
+        val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -22,7 +23,7 @@ class MoviesRepositoryImplTest {
         // assert
         assertEquals(localMovies, result)
         assertEquals(1, local.getPopularMoviesCalls)
-        assertEquals(0, remote.getPopularMoviesCalls)
+        assertEquals(0, popularRemote.getPopularMoviesCalls)
         assertEquals(0, local.savePopularMoviesCalls)
     }
 
@@ -31,8 +32,9 @@ class MoviesRepositoryImplTest {
         // arrange
         val remoteMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeMoviesLocalSource()
-        val remote = FakeMoviesExternalSource(popularMoviesResult = remoteMovies)
-        val repository = MoviesRepositoryImpl(remote, remote, local)
+        val popularRemote = FakePopularMoviesExternalSource(result = remoteMovies)
+        val detailRemote = FakeMovieDetailExternalSource()
+        val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
         val expected = remoteMovies
 
         // act
@@ -40,7 +42,7 @@ class MoviesRepositoryImplTest {
 
         // assert
         assertEquals(expected, result)
-        assertEquals(1, remote.getPopularMoviesCalls)
+        assertEquals(1, popularRemote.getPopularMoviesCalls)
         assertEquals(1, local.getPopularMoviesCalls)
         assertEquals(1, local.savePopularMoviesCalls)
         assertEquals(expected, local.lastSaved)
@@ -50,8 +52,9 @@ class MoviesRepositoryImplTest {
     fun `getPopularMovies should return empty list when remote fails`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val remote = FakeMoviesExternalSource(popularMoviesException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, remote, local)
+        val popularRemote = FakePopularMoviesExternalSource(exception = IllegalStateException())
+        val detailRemote = FakeMovieDetailExternalSource()
+        val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -59,7 +62,7 @@ class MoviesRepositoryImplTest {
         // assert
         assertEquals(emptyList(), result)
         assertEquals(1, local.getPopularMoviesCalls)
-        assertEquals(1, remote.getPopularMoviesCalls)
+        assertEquals(1, popularRemote.getPopularMoviesCalls)
         assertEquals(0, local.savePopularMoviesCalls)
     }
 
@@ -67,8 +70,9 @@ class MoviesRepositoryImplTest {
     fun `getPopularMovies should cache empty list when remote returns empty`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val remote = FakeMoviesExternalSource(popularMoviesResult = emptyList())
-        val repository = MoviesRepositoryImpl(remote, remote, local)
+        val popularRemote = FakePopularMoviesExternalSource(result = emptyList())
+        val detailRemote = FakeMovieDetailExternalSource()
+        val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
         val result = repository.getPopularMovies()
@@ -76,7 +80,7 @@ class MoviesRepositoryImplTest {
         // assert
         assertEquals(emptyList(), result)
         assertEquals(1, local.getPopularMoviesCalls)
-        assertEquals(1, remote.getPopularMoviesCalls)
+        assertEquals(1, popularRemote.getPopularMoviesCalls)
         assertEquals(1, local.savePopularMoviesCalls)
         assertEquals(emptyList(), local.lastSaved)
     }
@@ -86,8 +90,9 @@ class MoviesRepositoryImplTest {
         // arrange
         val expectedMovie = movie(id = 20)
         val local = FakeMoviesLocalSource()
-        val remote = FakeMoviesExternalSource(movieByTitleResult = expectedMovie)
-        val repository = MoviesRepositoryImpl(remote, remote, local)
+        val popularRemote = FakePopularMoviesExternalSource()
+        val detailRemote = FakeMovieDetailExternalSource(result = expectedMovie)
+        val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
         val expected = expectedMovie
 
         // act
@@ -95,36 +100,38 @@ class MoviesRepositoryImplTest {
 
         // assert
         assertEquals(expected, result)
-        assertEquals(1, remote.getMovieByTitleCalls)
+        assertEquals(1, detailRemote.getMovieByTitleCalls)
     }
 
     @Test
     fun `getMovieByTitle should return null when remote fails`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val remote = FakeMoviesExternalSource(movieByTitleException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, remote, local)
+        val popularRemote = FakePopularMoviesExternalSource()
+        val detailRemote = FakeMovieDetailExternalSource(exception = IllegalStateException())
+        val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
         val result = repository.getMovieByTitle("Unknown")
 
         // assert
         assertNull(result)
-        assertEquals(1, remote.getMovieByTitleCalls)
+        assertEquals(1, detailRemote.getMovieByTitleCalls)
     }
 
     @Test
     fun `getMovieDetails should return null when search has no results`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val remote = FakeMoviesExternalSource(movieByTitleException = IllegalStateException())
-        val repository = MoviesRepositoryImpl(remote, remote, local)
+        val popularRemote = FakePopularMoviesExternalSource()
+        val detailRemote = FakeMovieDetailExternalSource(exception = IllegalStateException())
+        val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
         val result = repository.getMovieByTitle("Missing movie")
 
         // assert
         assertNull(result)
-        assertEquals(1, remote.getMovieByTitleCalls)
+        assertEquals(1, detailRemote.getMovieByTitleCalls)
     }
 }

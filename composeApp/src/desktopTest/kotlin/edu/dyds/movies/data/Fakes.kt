@@ -5,25 +5,31 @@ import edu.dyds.movies.data.external.MovieDetailExternalSource
 import edu.dyds.movies.data.local.MoviesLocalSource
 import edu.dyds.movies.domain.entity.Movie
 
-class FakeMoviesExternalSource(
-    var popularMoviesResult: List<Movie>? = null,
-    var movieByTitleResult: Movie? = null,
-    var popularMoviesException: Exception? = null,
-    var movieByTitleException: Exception? = null,
-) : PopularMoviesExternalSource, MovieDetailExternalSource {
+class FakePopularMoviesExternalSource(
+    var result: List<Movie>? = null,
+    var exception: Exception? = null,
+) : PopularMoviesExternalSource {
     var getPopularMoviesCalls = 0
-    var getMovieByTitleCalls = 0
 
     override suspend fun getPopularMovies(): List<Movie> {
         getPopularMoviesCalls += 1
-        popularMoviesException?.let { throw it }
-        return requireNotNull(popularMoviesResult)
+        exception?.let { throw it }
+        return requireNotNull(result)
     }
+}
+
+class FakeMovieDetailExternalSource(
+    var result: Movie? = null,
+    var exception: Exception? = null,
+) : MovieDetailExternalSource {
+    var getMovieByTitleCalls = 0
+    var lastRequestedTitle: String? = null
 
     override suspend fun getMovieByTitle(title: String): Movie {
         getMovieByTitleCalls += 1
-        movieByTitleException?.let { throw it }
-        return requireNotNull(movieByTitleResult)
+        lastRequestedTitle = title
+        exception?.let { throw it }
+        return requireNotNull(result)
     }
 }
 
