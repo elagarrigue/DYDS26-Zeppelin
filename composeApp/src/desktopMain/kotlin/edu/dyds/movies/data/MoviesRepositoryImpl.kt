@@ -24,11 +24,6 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override suspend fun getMovieByTitle(title: String): Movie? {
-        return try {
-            movieDetailExternalSource.getMovieByTitle(title)
-        } catch (_: Exception) {
-            null
-        }
-    }
+    override suspend fun getMovieByTitle(title: String): Movie? =
+        movieDetailExternalSource.getMovieByTitle(title)
 }

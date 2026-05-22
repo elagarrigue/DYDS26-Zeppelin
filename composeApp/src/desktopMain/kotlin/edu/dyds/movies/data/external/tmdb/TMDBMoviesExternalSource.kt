@@ -38,8 +38,8 @@ internal class TMDBMoviesExternalSource : PopularMoviesExternalSource, MovieDeta
     override suspend fun getPopularMovies(): List<Movie> =
         getTMDBPopularMovies().toDomainMovieList()
 
-    override suspend fun getMovieByTitle(title: String): Movie =
-        getTMDBMovieDetails(title).results.first().toDomainMovie()
+    override suspend fun getMovieByTitle(title: String): Movie? =
+        runCatching { getTMDBMovieDetails(title).results.first().toDomainMovie() }.getOrNull()
 
     private suspend fun getTMDBMovieDetails(title: String): TMDBRemoteResult =
         httpClient.get("/3/search/movie") {

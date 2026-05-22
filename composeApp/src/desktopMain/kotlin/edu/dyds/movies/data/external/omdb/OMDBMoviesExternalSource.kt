@@ -34,8 +34,8 @@ internal class OMDBMoviesExternalSource : MovieDetailExternalSource {
             }
         }
 
-    override suspend fun getMovieByTitle(title: String): Movie =
-        getOMDBMovieDetails(title).toDomainMovie()
+    override suspend fun getMovieByTitle(title: String): Movie? =
+        runCatching { getOMDBMovieDetails(title).toDomainMovie() }.getOrNull()
 
     private suspend fun getOMDBMovieDetails(title: String): OMDBRemoteMovie =
         httpClient.get("/") {

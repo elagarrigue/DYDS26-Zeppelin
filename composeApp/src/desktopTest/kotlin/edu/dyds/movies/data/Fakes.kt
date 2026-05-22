@@ -23,13 +23,13 @@ class FakeMovieDetailExternalSource(
     var exception: Exception? = null,
 ) : MovieDetailExternalSource {
     var getMovieByTitleCalls = 0
-    var lastRequestedTitle: String? = null
 
-    override suspend fun getMovieByTitle(title: String): Movie {
+    override suspend fun getMovieByTitle(title: String): Movie? {
         getMovieByTitleCalls += 1
-        lastRequestedTitle = title
-        exception?.let { throw it }
-        return requireNotNull(result)
+        return runCatching {
+            exception?.let { throw it }
+            result
+        }.getOrNull()
     }
 }
 

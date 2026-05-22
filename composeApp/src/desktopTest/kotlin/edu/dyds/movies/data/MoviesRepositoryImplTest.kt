@@ -35,17 +35,16 @@ class MoviesRepositoryImplTest {
         val popularRemote = FakePopularMoviesExternalSource(result = remoteMovies)
         val detailRemote = FakeMovieDetailExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
-        val expected = remoteMovies
 
         // act
         val result = repository.getPopularMovies()
 
         // assert
-        assertEquals(expected, result)
+        assertEquals(remoteMovies, result)
         assertEquals(1, popularRemote.getPopularMoviesCalls)
         assertEquals(1, local.getPopularMoviesCalls)
         assertEquals(1, local.savePopularMoviesCalls)
-        assertEquals(expected, local.lastSaved)
+        assertEquals(remoteMovies, local.lastSaved)
     }
 
     @Test
@@ -93,13 +92,12 @@ class MoviesRepositoryImplTest {
         val popularRemote = FakePopularMoviesExternalSource()
         val detailRemote = FakeMovieDetailExternalSource(result = expectedMovie)
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
-        val expected = expectedMovie
 
         // act
         val result = repository.getMovieByTitle(expectedMovie.title)
 
         // assert
-        assertEquals(expected, result)
+        assertEquals(expectedMovie, result)
         assertEquals(1, detailRemote.getMovieByTitleCalls)
     }
 
