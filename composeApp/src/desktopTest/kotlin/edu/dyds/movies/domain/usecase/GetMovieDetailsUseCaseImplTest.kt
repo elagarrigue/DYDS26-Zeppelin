@@ -11,15 +11,15 @@ class GetMovieDetailsUseCaseImplTest {
     @Test
     fun `invoke should return movie details from repository`() = runTest {
         // arrange
-        val expected = movie(id = 10)
-        val repository = FakeMoviesRepository(movieByTitle = expected)
+        val expectedMovie = movie(id = 10)
+        val repository = FakeMoviesRepository(movieByTitle = expectedMovie)
         val useCase = GetMovieDetailsUseCaseImpl(repository)
 
         // act
-        val result = useCase(expected.title)
+        val result = useCase(expectedMovie.title)
 
         // assert
-        assertEquals(expected, result)
+        assertEquals(expectedMovie, result)
         assertEquals(1, repository.getMovieByTitleCalls)
     }
 

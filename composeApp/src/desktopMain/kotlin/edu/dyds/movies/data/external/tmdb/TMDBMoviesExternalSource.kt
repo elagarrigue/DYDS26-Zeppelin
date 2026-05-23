@@ -32,7 +32,7 @@ internal class TMDBMoviesExternalSource {
             }
         }
 
-    suspend fun getMovieDetailsResult(title: String): TMDBRemoteResult =
+    suspend fun getMovieDetailResult(title: String): TMDBRemoteResult =
         httpClient.get("/3/search/movie") {
             url { parameters.append("query", title) }
         }.body()

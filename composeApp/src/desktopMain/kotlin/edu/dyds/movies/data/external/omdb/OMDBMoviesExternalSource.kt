@@ -32,7 +32,7 @@ internal class OMDBMoviesExternalSource {
             }
         }
 
-    suspend fun getMovieDetails(title: String): OMDBRemoteMovie =
+    suspend fun getMovieDetailResult(title: String): OMDBRemoteMovie =
         httpClient.get("/") {
             url { parameters.append("t", title) }
         }.body()
