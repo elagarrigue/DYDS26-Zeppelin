@@ -13,8 +13,8 @@ class MoviesRepositoryImplTest {
         // arrange
         val localMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeMoviesLocalSource(initialMovies = localMovies)
-        val popularRemote = FakePopularMoviesExternalSource(exception = IllegalStateException())
-        val detailRemote = FakeMovieDetailExternalSource()
+        val popularRemote = FakeMoviesExternalSource(exception = IllegalStateException())
+        val detailRemote = FakeMovieExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -32,8 +32,8 @@ class MoviesRepositoryImplTest {
         // arrange
         val expectedMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeMoviesLocalSource()
-        val popularRemote = FakePopularMoviesExternalSource(result = expectedMovies)
-        val detailRemote = FakeMovieDetailExternalSource()
+        val popularRemote = FakeMoviesExternalSource(result = expectedMovies)
+        val detailRemote = FakeMovieExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -51,8 +51,8 @@ class MoviesRepositoryImplTest {
     fun `getPopularMovies should return empty list when remote fails`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val popularRemote = FakePopularMoviesExternalSource(exception = IllegalStateException())
-        val detailRemote = FakeMovieDetailExternalSource()
+        val popularRemote = FakeMoviesExternalSource(exception = IllegalStateException())
+        val detailRemote = FakeMovieExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -69,8 +69,8 @@ class MoviesRepositoryImplTest {
     fun `getPopularMovies should cache empty list when remote returns empty`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val popularRemote = FakePopularMoviesExternalSource(result = emptyList())
-        val detailRemote = FakeMovieDetailExternalSource()
+        val popularRemote = FakeMoviesExternalSource(result = emptyList())
+        val detailRemote = FakeMovieExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -89,8 +89,8 @@ class MoviesRepositoryImplTest {
         // arrange
         val expectedMovie = movie(id = 20)
         val local = FakeMoviesLocalSource()
-        val popularRemote = FakePopularMoviesExternalSource()
-        val detailRemote = FakeMovieDetailExternalSource(result = expectedMovie)
+        val popularRemote = FakeMoviesExternalSource()
+        val detailRemote = FakeMovieExternalSource(result = expectedMovie)
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -105,8 +105,8 @@ class MoviesRepositoryImplTest {
     fun `getMovieByTitle should return null when remote fails`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val popularRemote = FakePopularMoviesExternalSource()
-        val detailRemote = FakeMovieDetailExternalSource(exception = IllegalStateException())
+        val popularRemote = FakeMoviesExternalSource()
+        val detailRemote = FakeMovieExternalSource(exception = IllegalStateException())
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -121,8 +121,8 @@ class MoviesRepositoryImplTest {
     fun `getMovieByTitle should return null when search has no results`() = runTest {
         // arrange
         val local = FakeMoviesLocalSource()
-        val popularRemote = FakePopularMoviesExternalSource()
-        val detailRemote = FakeMovieDetailExternalSource(exception = IllegalStateException())
+        val popularRemote = FakeMoviesExternalSource()
+        val detailRemote = FakeMovieExternalSource(exception = IllegalStateException())
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act

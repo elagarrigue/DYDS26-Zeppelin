@@ -1,8 +1,8 @@
 package edu.dyds.movies.data.external.tmdb
 
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.data.external.MovieDetailExternalSource
-import edu.dyds.movies.data.external.PopularMoviesExternalSource
+import edu.dyds.movies.data.external.MovieExternalSource
+import edu.dyds.movies.data.external.MoviesExternalSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
 
 private const val TMDB_API_KEY = "d18da1b5da16397619c688b0263cd281"
 
-internal class TMDBMoviesExternalSource : PopularMoviesExternalSource, MovieDetailExternalSource {
+internal class TMDBMoviesExternalSource : MoviesExternalSource, MovieExternalSource {
     private val httpClient =
         HttpClient {
             install(ContentNegotiation) {

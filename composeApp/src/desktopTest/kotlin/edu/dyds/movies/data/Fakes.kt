@@ -1,14 +1,14 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.data.external.PopularMoviesExternalSource
-import edu.dyds.movies.data.external.MovieDetailExternalSource
+import edu.dyds.movies.data.external.MoviesExternalSource
+import edu.dyds.movies.data.external.MovieExternalSource
 import edu.dyds.movies.data.local.MoviesLocalSource
 import edu.dyds.movies.domain.entity.Movie
 
-class FakePopularMoviesExternalSource(
+class FakeMoviesExternalSource(
     var result: List<Movie>? = null,
     var exception: Exception? = null,
-) : PopularMoviesExternalSource {
+) : MoviesExternalSource {
     var getPopularMoviesCalls = 0
 
     override suspend fun getPopularMovies(): List<Movie> {
@@ -18,10 +18,10 @@ class FakePopularMoviesExternalSource(
     }
 }
 
-class FakeMovieDetailExternalSource(
+class FakeMovieExternalSource(
     var result: Movie? = null,
     var exception: Exception? = null,
-) : MovieDetailExternalSource {
+) : MovieExternalSource {
     var getMovieByTitleCalls = 0
 
     override suspend fun getMovieByTitle(title: String): Movie? {
