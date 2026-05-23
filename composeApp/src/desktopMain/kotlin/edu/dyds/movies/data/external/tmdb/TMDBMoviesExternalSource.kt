@@ -1,8 +1,5 @@
 package edu.dyds.movies.data.external.tmdb
 
-import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.data.external.MovieExternalSource
-import edu.dyds.movies.data.external.MoviesExternalSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
@@ -15,7 +12,7 @@ import kotlinx.serialization.json.Json
 
 private const val TMDB_API_KEY = "d18da1b5da16397619c688b0263cd281"
 
-internal class TMDBMoviesExternalSource : MoviesExternalSource, MovieExternalSource {
+internal class TMDBMoviesExternalSource {
     private val httpClient =
         HttpClient {
             install(ContentNegotiation) {
@@ -35,17 +32,11 @@ internal class TMDBMoviesExternalSource : MoviesExternalSource, MovieExternalSou
             }
         }
 
-    override suspend fun getPopularMovies(): List<Movie> =
-        getTMDBPopularMovies().toDomainMovieList()
-
-    override suspend fun getMovieByTitle(title: String): Movie? =
-        runCatching { getTMDBMovieDetails(title).results.first().toDomainMovie() }.getOrNull()
-
-    private suspend fun getTMDBMovieDetails(title: String): TMDBRemoteResult =
+    suspend fun getMovieDetailsResult(title: String): TMDBRemoteResult =
         httpClient.get("/3/search/movie") {
             url { parameters.append("query", title) }
         }.body()
 
-    private suspend fun getTMDBPopularMovies(): TMDBRemoteResult =
+    suspend fun getPopularMoviesResult(): TMDBRemoteResult =
         httpClient.get("/3/discover/movie?sort_by=popularity.desc").body()
 }

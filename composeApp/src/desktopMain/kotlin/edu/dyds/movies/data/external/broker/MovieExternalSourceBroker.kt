@@ -1,12 +1,11 @@
-package edu.dyds.movies.data.external
+package edu.dyds.movies.data.external.broker
 
-import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSource
-import edu.dyds.movies.data.external.tmdb.TMDBMoviesExternalSource
+import edu.dyds.movies.data.external.MovieExternalSource
 import edu.dyds.movies.domain.entity.Movie
 
 internal class MovieExternalSourceBroker(
-    private val tmdbMoviesExternalSource: TMDBMoviesExternalSource,
-    private val omdbMoviesExternalSource: OMDBMoviesExternalSource,
+    private val tmdbMoviesExternalSource: MovieExternalSource,
+    private val omdbMoviesExternalSource: MovieExternalSource,
 ) : MovieExternalSource {
     override suspend fun getMovieByTitle(title: String): Movie? {
         val tmdbMovie = tmdbMoviesExternalSource.getMovieByTitle(title)
@@ -40,5 +39,6 @@ internal class MovieExternalSourceBroker(
     private fun Movie.withSourceOverview(source: String): Movie =
         copy(overview = "$source: $overview")
 }
+
 
 
