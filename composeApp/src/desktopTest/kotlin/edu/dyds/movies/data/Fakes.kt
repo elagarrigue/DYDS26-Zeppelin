@@ -2,6 +2,10 @@ package edu.dyds.movies.data
 
 import edu.dyds.movies.data.external.PopularMoviesExternalSource
 import edu.dyds.movies.data.external.MovieDetailExternalSource
+import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSource
+import edu.dyds.movies.data.external.omdb.OMDBRemoteMovie
+import edu.dyds.movies.data.external.tmdb.TMDBMoviesExternalSource
+import edu.dyds.movies.data.external.tmdb.TMDBRemoteResult
 import edu.dyds.movies.data.local.MoviesLocalSource
 import edu.dyds.movies.domain.entity.Movie
 
@@ -52,5 +56,40 @@ class FakeMoviesLocalSource(
         lastSaved = movies
         cache.clear()
         cache.addAll(movies)
+    }
+}
+
+class FakeTMDBMoviesExternalSource(
+    var popularResult: TMDBRemoteResult? = null,
+    var detailResult: TMDBRemoteResult? = null,
+    var popularException: Exception? = null,
+    var detailException: Exception? = null,
+) : TMDBMoviesExternalSource {
+    var getPopularMoviesCalls = 0
+    var getMovieDetailCalls = 0
+
+    override suspend fun getMovieDetailResult(title: String): TMDBRemoteResult {
+        getMovieDetailCalls += 1
+        detailException?.let { throw it }
+        return requireNotNull(detailResult)
+    }
+
+    override suspend fun getPopularMoviesResult(): TMDBRemoteResult {
+        getPopularMoviesCalls += 1
+        popularException?.let { throw it }
+        return requireNotNull(popularResult)
+    }
+}
+
+class FakeOMDBMoviesExternalSource(
+    var result: OMDBRemoteMovie? = null,
+    var exception: Exception? = null,
+) : OMDBMoviesExternalSource {
+    var getMovieDetailCalls = 0
+
+    override suspend fun getMovieDetailResult(title: String): OMDBRemoteMovie {
+        getMovieDetailCalls += 1
+        exception?.let { throw it }
+        return requireNotNull(result)
     }
 }

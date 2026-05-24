@@ -11,14 +11,12 @@ class MovieDetailExternalSourceBrokerTest {
 
     @Test
     fun `getMovieByTitle should merge TMDB and OMDB results when both are available`() = runTest {
+        // arrange
         val tmdbMovie = movie(id = 1, overview = "Tmdb overview", popularity = 8.0, voteAverage = 6.0)
         val omdbMovie = movie(id = 2, overview = "Omdb overview", popularity = 4.0, voteAverage = 2.0)
         val tmdbSource = FakeMovieDetailExternalSource(result = tmdbMovie)
         val omdbSource = FakeMovieDetailExternalSource(result = omdbMovie)
         val broker = MovieDetailExternalSourceBroker(tmdbSource, omdbSource)
-
-        val result = broker.getMovieByTitle("Any")
-
         val expected = movie(
             id = tmdbMovie.id,
             title = tmdbMovie.title,
@@ -31,6 +29,11 @@ class MovieDetailExternalSourceBrokerTest {
             popularity = 6.0,
             voteAverage = 4.0
         )
+
+        // act
+        val result = broker.getMovieByTitle("Any")
+
+        // assert
         assertEquals(expected, result)
         assertEquals(1, tmdbSource.getMovieByTitleCalls)
         assertEquals(1, omdbSource.getMovieByTitleCalls)
@@ -38,14 +41,17 @@ class MovieDetailExternalSourceBrokerTest {
 
     @Test
     fun `getMovieByTitle should return TMDB result when OMDB is missing`() = runTest {
+        // arrange
         val tmdbMovie = movie(id = 1, overview = "Tmdb overview")
         val tmdbSource = FakeMovieDetailExternalSource(result = tmdbMovie)
         val omdbSource = FakeMovieDetailExternalSource(result = null)
         val broker = MovieDetailExternalSourceBroker(tmdbSource, omdbSource)
+        val expected = tmdbMovie.copy(overview = "TMDB: ${tmdbMovie.overview}")
 
+        // act
         val result = broker.getMovieByTitle(tmdbMovie.title)
 
-        val expected = tmdbMovie.copy(overview = "TMDB: ${tmdbMovie.overview}")
+        // assert
         assertEquals(expected, result)
         assertEquals(1, tmdbSource.getMovieByTitleCalls)
         assertEquals(1, omdbSource.getMovieByTitleCalls)
@@ -53,14 +59,17 @@ class MovieDetailExternalSourceBrokerTest {
 
     @Test
     fun `getMovieByTitle should return OMDB result when TMDB is missing`() = runTest {
+        // arrange
         val omdbMovie = movie(id = 2, overview = "Omdb overview")
         val tmdbSource = FakeMovieDetailExternalSource(result = null)
         val omdbSource = FakeMovieDetailExternalSource(result = omdbMovie)
         val broker = MovieDetailExternalSourceBroker(tmdbSource, omdbSource)
+        val expected = omdbMovie.copy(overview = "OMDB: ${omdbMovie.overview}")
 
+        // act
         val result = broker.getMovieByTitle(omdbMovie.title)
 
-        val expected = omdbMovie.copy(overview = "OMDB: ${omdbMovie.overview}")
+        // assert
         assertEquals(expected, result)
         assertEquals(1, tmdbSource.getMovieByTitleCalls)
         assertEquals(1, omdbSource.getMovieByTitleCalls)
@@ -68,12 +77,15 @@ class MovieDetailExternalSourceBrokerTest {
 
     @Test
     fun `getMovieByTitle should return null when both sources are missing`() = runTest {
+        // arrange
         val tmdbSource = FakeMovieDetailExternalSource(result = null)
         val omdbSource = FakeMovieDetailExternalSource(result = null)
         val broker = MovieDetailExternalSourceBroker(tmdbSource, omdbSource)
 
+        // act
         val result = broker.getMovieByTitle("Unknown")
 
+        // assert
         assertNull(result)
         assertEquals(1, tmdbSource.getMovieByTitleCalls)
         assertEquals(1, omdbSource.getMovieByTitleCalls)
