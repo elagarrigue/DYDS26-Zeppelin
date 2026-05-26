@@ -14,15 +14,15 @@ class MovieDetailsViewModelTest {
         // arrange
         val useCase = FakeGetMovieDetailsUseCase(movie = null)
         val viewModel = MovieDetailsViewModel(useCase)
-        var initialState: MovieDetailUiState? = null
+        var initialState: MovieDetailsUiState? = null
 
         // act
-        viewModel.movieDetailStateFlow.test {
+        viewModel.movieDetailsStateFlow.test {
             initialState = awaitItem()
         }
 
         // assert
-        assertEquals(MovieDetailUiState(), initialState)
+        assertEquals(MovieDetailsUiState(), initialState)
     }
 
     @Test
@@ -31,11 +31,11 @@ class MovieDetailsViewModelTest {
         val expectedMovie = movie(id = 10)
         val useCase = FakeGetMovieDetailsUseCase(movie = expectedMovie)
         val viewModel = MovieDetailsViewModel(useCase)
-        var loadingState: MovieDetailUiState? = null
-        var finalState: MovieDetailUiState? = null
+        var loadingState: MovieDetailsUiState? = null
+        var finalState: MovieDetailsUiState? = null
 
         // act
-        viewModel.movieDetailStateFlow.test {
+        viewModel.movieDetailsStateFlow.test {
             awaitItem()
             viewModel.getMovieDetails(expectedMovie.title)
             loadingState = awaitItem()
@@ -43,8 +43,8 @@ class MovieDetailsViewModelTest {
         }
 
         // assert
-        assertEquals(MovieDetailUiState(isLoading = true), loadingState)
-        assertEquals(MovieDetailUiState(isLoading = false, movie = expectedMovie), finalState)
+        assertEquals(MovieDetailsUiState(isLoading = true), loadingState)
+        assertEquals(MovieDetailsUiState(isLoading = false, movie = expectedMovie), finalState)
         assertEquals(1, useCase.getMovieDetailsCalls)
         assertEquals(expectedMovie.title, useCase.lastRequestedTitle)
     }
@@ -55,10 +55,10 @@ class MovieDetailsViewModelTest {
         val title = "Unknown"
         val useCase = FakeGetMovieDetailsUseCase(movie = null)
         val viewModel = MovieDetailsViewModel(useCase)
-        var finalState: MovieDetailUiState? = null
+        var finalState: MovieDetailsUiState? = null
 
         // act
-        viewModel.movieDetailStateFlow.test {
+        viewModel.movieDetailsStateFlow.test {
             awaitItem()
             viewModel.getMovieDetails(title)
             awaitItem()
@@ -66,7 +66,7 @@ class MovieDetailsViewModelTest {
         }
 
         // assert
-        assertEquals(MovieDetailUiState(isLoading = false, movie = null), finalState)
+        assertEquals(MovieDetailsUiState(isLoading = false, movie = null), finalState)
         assertEquals(1, useCase.getMovieDetailsCalls)
         assertEquals(title, useCase.lastRequestedTitle)
     }

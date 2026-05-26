@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import edu.dyds.movies.di.MoviesDependencyInjector.getMovieDetailsViewModel
 import edu.dyds.movies.di.MoviesDependencyInjector.getPopularMoviesViewModel
-import edu.dyds.movies.presentation.detail.DetailRoute
+import edu.dyds.movies.presentation.detail.DetailsRoute
 import edu.dyds.movies.presentation.home.HomeRoute
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -61,7 +61,7 @@ private fun NavGraphBuilder.detailDestination(
         val movieTitle = backstackEntry.arguments?.getString(MOVIE_TITLE)
 
         movieTitle?.let {
-            DetailRoute(
+            DetailsRoute(
                 viewModel = getMovieDetailsViewModel(),
                 title = decodeRouteValue(it),
                 onBack = { navController.popBackStack() }

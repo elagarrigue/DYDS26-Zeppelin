@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 private const val OMDB_API_KEY = "a96e7f78"
 
 internal interface OMDBMoviesExternalSource {
-    suspend fun getMovieDetailResult(title: String): OMDBRemoteMovie
+    suspend fun getMovie(title: String): OMDBRemoteMovie
 }
 
 internal class OMDBMoviesExternalSourceImpl : OMDBMoviesExternalSource {
@@ -36,7 +36,7 @@ internal class OMDBMoviesExternalSourceImpl : OMDBMoviesExternalSource {
             }
         }
 
-    override suspend fun getMovieDetailResult(title: String): OMDBRemoteMovie =
+    override suspend fun getMovie(title: String): OMDBRemoteMovie =
         httpClient.get("/") {
             url { parameters.append("t", title) }
         }.body()

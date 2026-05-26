@@ -1,6 +1,6 @@
 package edu.dyds.movies.data.external.tmdb.proxy
 
-import edu.dyds.movies.data.external.MovieDetailExternalSource
+import edu.dyds.movies.data.external.MovieDetailsExternalSource
 import edu.dyds.movies.data.external.PopularMoviesExternalSource
 import edu.dyds.movies.data.external.tmdb.TMDBMoviesExternalSource
 import edu.dyds.movies.data.external.tmdb.TMDBRemoteMovie
@@ -10,13 +10,13 @@ private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p"
 
 internal class TMDBMoviesProxy(
     private val externalSource: TMDBMoviesExternalSource,
-) : PopularMoviesExternalSource, MovieDetailExternalSource {
+) : PopularMoviesExternalSource, MovieDetailsExternalSource {
     override suspend fun getPopularMovies(): List<Movie> =
-        runCatching { externalSource.getPopularMoviesResult().results.map { it.toDomainMovie() } }
+        runCatching { externalSource.getPopularMovies().results.map { it.toDomainMovie() } }
             .getOrDefault(emptyList())
 
     override suspend fun getMovieByTitle(title: String): Movie? =
-        runCatching { externalSource.getMovieDetailResult(title).results.first().toDomainMovie() }
+        runCatching { externalSource.getMovie(title).toDomainMovie() }
             .getOrNull()
 }
 

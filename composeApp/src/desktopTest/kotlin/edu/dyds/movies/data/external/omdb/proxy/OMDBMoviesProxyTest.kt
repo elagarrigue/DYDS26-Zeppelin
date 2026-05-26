@@ -44,7 +44,7 @@ class OMDBMoviesProxyTest {
 
         // assert
         assertEquals(expected, result)
-        assertEquals(1, externalSource.getMovieDetailCalls)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
     }
 
     @Test
@@ -80,7 +80,7 @@ class OMDBMoviesProxyTest {
 
         // assert
         assertEquals(expected, result)
-        assertEquals(1, externalSource.getMovieDetailCalls)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
     }
 
     @Test
@@ -94,6 +94,6 @@ class OMDBMoviesProxyTest {
 
         // assert
         assertNull(result)
-        assertEquals(1, externalSource.getMovieDetailCalls)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
     }
 }

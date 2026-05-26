@@ -3,7 +3,7 @@ package edu.dyds.movies.di
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.dyds.movies.data.MoviesRepositoryImpl
-import edu.dyds.movies.data.external.broker.MovieDetailExternalSourceBroker
+import edu.dyds.movies.data.external.broker.MovieDetailsExternalSourceBroker
 import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSourceImpl
 import edu.dyds.movies.data.external.omdb.proxy.OMDBMoviesProxy
 import edu.dyds.movies.data.external.tmdb.TMDBMoviesExternalSourceImpl
@@ -19,8 +19,8 @@ object MoviesDependencyInjector {
     private val omdbMoviesExternalSource = OMDBMoviesExternalSourceImpl()
     private val tmdbMoviesProxy = TMDBMoviesProxy(tmdbMoviesExternalSource)
     private val omdbMoviesProxy = OMDBMoviesProxy(omdbMoviesExternalSource)
-    private val movieDetailExternalSourceBroker = MovieDetailExternalSourceBroker(tmdbMoviesProxy, omdbMoviesProxy)
-    private val moviesRepository = MoviesRepositoryImpl(tmdbMoviesProxy, movieDetailExternalSourceBroker, MoviesLocalSourceImpl())
+    private val movieDetailsExternalSourceBroker = MovieDetailsExternalSourceBroker(tmdbMoviesProxy, omdbMoviesProxy)
+    private val moviesRepository = MoviesRepositoryImpl(tmdbMoviesProxy, movieDetailsExternalSourceBroker, MoviesLocalSourceImpl())
     private val getPopularMoviesUseCase = GetPopularMoviesUseCaseImpl(moviesRepository)
     private val getMovieDetailsUseCase = GetMovieDetailsUseCaseImpl(moviesRepository)
 

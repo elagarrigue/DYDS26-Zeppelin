@@ -14,7 +14,7 @@ class MoviesRepositoryImplTest {
         val localMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeMoviesLocalSource(initialMovies = localMovies)
         val popularRemote = FakePopularMoviesExternalSource(exception = IllegalStateException())
-        val detailRemote = FakeMovieDetailExternalSource()
+        val detailRemote = FakeMovieDetailsExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -33,7 +33,7 @@ class MoviesRepositoryImplTest {
         val expectedMovies = listOf(movie(id = 1), movie(id = 2))
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource(result = expectedMovies)
-        val detailRemote = FakeMovieDetailExternalSource()
+        val detailRemote = FakeMovieDetailsExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -52,7 +52,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource(exception = IllegalStateException())
-        val detailRemote = FakeMovieDetailExternalSource()
+        val detailRemote = FakeMovieDetailsExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -70,7 +70,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource(result = emptyList())
-        val detailRemote = FakeMovieDetailExternalSource()
+        val detailRemote = FakeMovieDetailsExternalSource()
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -90,7 +90,7 @@ class MoviesRepositoryImplTest {
         val expectedMovie = movie(id = 20)
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource()
-        val detailRemote = FakeMovieDetailExternalSource(result = expectedMovie)
+        val detailRemote = FakeMovieDetailsExternalSource(result = expectedMovie)
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -106,7 +106,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource()
-        val detailRemote = FakeMovieDetailExternalSource(exception = IllegalStateException())
+        val detailRemote = FakeMovieDetailsExternalSource(exception = IllegalStateException())
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act
@@ -122,7 +122,7 @@ class MoviesRepositoryImplTest {
         // arrange
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource()
-        val detailRemote = FakeMovieDetailExternalSource(exception = IllegalStateException())
+        val detailRemote = FakeMovieDetailsExternalSource(exception = IllegalStateException())
         val repository = MoviesRepositoryImpl(popularRemote, detailRemote, local)
 
         // act

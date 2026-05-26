@@ -13,9 +13,9 @@ import kotlinx.serialization.json.Json
 private const val TMDB_API_KEY = "d18da1b5da16397619c688b0263cd281"
 
 internal interface TMDBMoviesExternalSource {
-    suspend fun getMovieDetailResult(title: String): TMDBRemoteResult
+    suspend fun getMovie(title: String): TMDBRemoteMovie
 
-    suspend fun getPopularMoviesResult(): TMDBRemoteResult
+    suspend fun getPopularMovies(): TMDBRemoteResult
 }
 
 internal class TMDBMoviesExternalSourceImpl : TMDBMoviesExternalSource {
@@ -38,11 +38,11 @@ internal class TMDBMoviesExternalSourceImpl : TMDBMoviesExternalSource {
             }
         }
 
-    override suspend fun getMovieDetailResult(title: String): TMDBRemoteResult =
+    override suspend fun getMovie(title: String): TMDBRemoteMovie =
         httpClient.get("/3/search/movie") {
             url { parameters.append("query", title) }
-        }.body()
+        }.body<TMDBRemoteResult>().results.first()
 
-    override suspend fun getPopularMoviesResult(): TMDBRemoteResult =
+    override suspend fun getPopularMovies(): TMDBRemoteResult =
         httpClient.get("/3/discover/movie?sort_by=popularity.desc").body()
 }

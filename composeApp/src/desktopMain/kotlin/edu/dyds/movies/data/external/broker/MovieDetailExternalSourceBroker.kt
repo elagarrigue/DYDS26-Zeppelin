@@ -1,15 +1,17 @@
 package edu.dyds.movies.data.external.broker
 
-import edu.dyds.movies.data.external.MovieDetailExternalSource
+import edu.dyds.movies.data.external.MovieDetailsExternalSource
+import edu.dyds.movies.data.external.omdb.proxy.OMDBMoviesProxy
+import edu.dyds.movies.data.external.tmdb.proxy.TMDBMoviesProxy
 import edu.dyds.movies.domain.entity.Movie
 
-internal class MovieDetailExternalSourceBroker(
-    private val tmdbMovieDetailExternalSource: MovieDetailExternalSource,
-    private val omdbMovieDetailExternalSource: MovieDetailExternalSource,
-) : MovieDetailExternalSource {
+internal class MovieDetailsExternalSourceBroker(
+    private val tmdbMoviesProxy: TMDBMoviesProxy,
+    private val omdbMoviesProxy: OMDBMoviesProxy,
+) : MovieDetailsExternalSource {
     override suspend fun getMovieByTitle(title: String): Movie? {
-        val tmdbMovie = tmdbMovieDetailExternalSource.getMovieByTitle(title)
-        val omdbMovie = omdbMovieDetailExternalSource.getMovieByTitle(title)
+        val tmdbMovie = tmdbMoviesProxy.getMovieByTitle(title)
+        val omdbMovie = omdbMoviesProxy.getMovieByTitle(title)
 
         return when {
             tmdbMovie != null && omdbMovie != null -> buildMovie(tmdbMovie, omdbMovie)

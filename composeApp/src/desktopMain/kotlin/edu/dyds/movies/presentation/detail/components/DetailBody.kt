@@ -31,21 +31,21 @@ import edu.dyds.movies.domain.entity.Movie
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun MovieDetail(
+fun MovieDetails(
     movie: Movie,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
     ) {
-        DetailBackdrop(movie = movie)
-        DetailOverview(overview = movie.overview)
-        DetailMetadata(movie = movie)
+        DetailsBackdrop(movie = movie)
+        DetailsOverview(overview = movie.overview)
+        DetailsMetadata(movie = movie)
     }
 }
 
 @Composable
-fun DetailBackdrop(movie: Movie) {
+fun DetailsBackdrop(movie: Movie) {
     AsyncImage(
         model = movie.backdrop ?: movie.poster,
         contentDescription = "",
@@ -57,7 +57,7 @@ fun DetailBackdrop(movie: Movie) {
 }
 
 @Composable
-fun DetailOverview(overview: String) {
+fun DetailsOverview(overview: String) {
     Text(
         text = overview,
         modifier = Modifier.padding(16.dp),
@@ -65,7 +65,7 @@ fun DetailOverview(overview: String) {
 }
 
 @Composable
-fun DetailMetadata(movie: Movie) {
+fun DetailsMetadata(movie: Movie) {
     Text(
         text = buildAnnotatedString {
             property(stringResource(Res.string.original_language), movie.originalLanguage)

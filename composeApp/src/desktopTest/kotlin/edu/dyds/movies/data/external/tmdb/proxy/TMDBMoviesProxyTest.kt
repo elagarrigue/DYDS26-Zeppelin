@@ -86,14 +86,7 @@ class TMDBMoviesProxyTest {
             popularity = null,
             voteAverage = null
         )
-        val externalSource = FakeTMDBMoviesExternalSource(
-            detailResult = TMDBRemoteResult(
-                page = 1,
-                results = listOf(remoteMovie),
-                totalPages = 1,
-                totalResults = 1
-            )
-        )
+        val externalSource = FakeTMDBMoviesExternalSource(detailResult = remoteMovie)
         val proxy = TMDBMoviesProxy(externalSource)
         val expected = Movie(
             id = 20,
@@ -113,20 +106,13 @@ class TMDBMoviesProxyTest {
 
         // assert
         assertEquals(expected, result)
-        assertEquals(1, externalSource.getMovieDetailCalls)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
     }
 
     @Test
     fun `getMovieByTitle should return null when external source returns empty results`() = runTest {
         // arrange
-        val externalSource = FakeTMDBMoviesExternalSource(
-            detailResult = TMDBRemoteResult(
-                page = 1,
-                results = emptyList(),
-                totalPages = 1,
-                totalResults = 0
-            )
-        )
+        val externalSource = FakeTMDBMoviesExternalSource(detailResult = null)
         val proxy = TMDBMoviesProxy(externalSource)
 
         // act
@@ -134,7 +120,7 @@ class TMDBMoviesProxyTest {
 
         // assert
         assertNull(result)
-        assertEquals(1, externalSource.getMovieDetailCalls)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
     }
 }
 
