@@ -18,7 +18,7 @@ class MovieDetailsExternalSourceBrokerTest {
         // arrange
         val tmdbMovie = movie(id = 1, overview = "Tmdb overview", popularity = 8.0, voteAverage = 6.0)
         val omdbMovie = movie(id = 2, overview = "Omdb overview", popularity = 4.0, voteAverage = 2.0)
-        val tmdbExternalSource = FakeTMDBMoviesExternalSource(detailResult = remoteMovie(tmdbMovie))
+        val tmdbExternalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie(tmdbMovie))
         val omdbExternalSource = FakeOMDBMoviesExternalSource(result = remoteOmdbMovie(omdbMovie))
         val tmdbProxy = TMDBMoviesProxy(tmdbExternalSource)
         val omdbProxy = OMDBMoviesProxy(omdbExternalSource)
@@ -49,7 +49,7 @@ class MovieDetailsExternalSourceBrokerTest {
     fun `getMovieByTitle should return TMDB result when OMDB is missing`() = runTest {
         // arrange
         val tmdbMovie = movie(id = 1, overview = "Tmdb overview")
-        val tmdbExternalSource = FakeTMDBMoviesExternalSource(detailResult = remoteMovie(tmdbMovie))
+        val tmdbExternalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie(tmdbMovie))
         val omdbExternalSource = FakeOMDBMoviesExternalSource(exception = IllegalStateException())
         val tmdbProxy = TMDBMoviesProxy(tmdbExternalSource)
         val omdbProxy = OMDBMoviesProxy(omdbExternalSource)
@@ -84,7 +84,7 @@ class MovieDetailsExternalSourceBrokerTest {
             releaseDate = "1999-03-31",
             poster = posterUrl
         )
-        val tmdbExternalSource = FakeTMDBMoviesExternalSource(detailException = IllegalStateException())
+        val tmdbExternalSource = FakeTMDBMoviesExternalSource(movieDetailsException = IllegalStateException())
         val omdbExternalSource = FakeOMDBMoviesExternalSource(result = remoteOmdbMovie(omdbMovie, posterUrl))
         val tmdbProxy = TMDBMoviesProxy(tmdbExternalSource)
         val omdbProxy = OMDBMoviesProxy(omdbExternalSource)
@@ -114,7 +114,7 @@ class MovieDetailsExternalSourceBrokerTest {
     @Test
     fun `getMovieByTitle should return null when both sources are missing`() = runTest {
         // arrange
-        val tmdbExternalSource = FakeTMDBMoviesExternalSource(detailException = IllegalStateException())
+        val tmdbExternalSource = FakeTMDBMoviesExternalSource(movieDetailsException = IllegalStateException())
         val omdbExternalSource = FakeOMDBMoviesExternalSource(exception = IllegalStateException())
         val tmdbProxy = TMDBMoviesProxy(tmdbExternalSource)
         val omdbProxy = OMDBMoviesProxy(omdbExternalSource)

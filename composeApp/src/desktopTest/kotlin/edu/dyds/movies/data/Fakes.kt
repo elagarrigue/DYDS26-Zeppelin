@@ -27,10 +27,10 @@ class FakeMovieDetailsExternalSource(
     var result: Movie? = null,
     var exception: Exception? = null,
 ) : MovieDetailsExternalSource {
-    var getMovieByTitleCalls = 0
+    var getMovieDetailsCalls = 0
 
     override suspend fun getMovieByTitle(title: String): Movie? {
-        getMovieByTitleCalls += 1
+        getMovieDetailsCalls += 1
         return runCatching {
             exception?.let { throw it }
             result
@@ -62,17 +62,17 @@ class FakeMoviesLocalSource(
 
 class FakeTMDBMoviesExternalSource(
     var popularResult: TMDBRemoteResult? = null,
-    var detailResult: TMDBRemoteMovie? = null,
+    var movieDetailsResult: TMDBRemoteMovie? = null,
     var popularException: Exception? = null,
-    var detailException: Exception? = null,
+    var movieDetailsException: Exception? = null,
 ) : TMDBMoviesExternalSource {
     var getPopularMoviesCalls = 0
     var getMovieDetailsCalls = 0
 
     override suspend fun getMovie(title: String): TMDBRemoteMovie {
         getMovieDetailsCalls += 1
-        detailException?.let { throw it }
-        return requireNotNull(detailResult)
+        movieDetailsException?.let { throw it }
+        return requireNotNull(movieDetailsResult)
     }
 
     override suspend fun getPopularMovies(): TMDBRemoteResult {

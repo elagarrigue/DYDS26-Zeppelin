@@ -1,7 +1,6 @@
 package edu.dyds.movies.data.external.tmdb.proxy
 
 import edu.dyds.movies.data.FakeTMDBMoviesExternalSource
-import edu.dyds.movies.data.external.tmdb.TMDBMoviesExternalSource
 import edu.dyds.movies.data.external.tmdb.TMDBRemoteMovie
 import edu.dyds.movies.data.external.tmdb.TMDBRemoteResult
 import edu.dyds.movies.domain.entity.Movie
@@ -86,7 +85,7 @@ class TMDBMoviesProxyTest {
             popularity = null,
             voteAverage = null
         )
-        val externalSource = FakeTMDBMoviesExternalSource(detailResult = remoteMovie)
+        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie)
         val proxy = TMDBMoviesProxy(externalSource)
         val expected = Movie(
             id = 20,
@@ -112,7 +111,7 @@ class TMDBMoviesProxyTest {
     @Test
     fun `getMovieByTitle should return null when external source returns empty results`() = runTest {
         // arrange
-        val externalSource = FakeTMDBMoviesExternalSource(detailResult = null)
+        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = null)
         val proxy = TMDBMoviesProxy(externalSource)
 
         // act
