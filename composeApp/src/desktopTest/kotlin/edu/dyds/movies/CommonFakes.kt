@@ -2,7 +2,7 @@ package edu.dyds.movies
 
 import edu.dyds.movies.domain.entity.Movie
 
-private object FakeMovieDefaults {
+internal object FakeMovieDefaults {
     const val RELEASE_DATE = "2024-01-01"
     const val ORIGINAL_LANGUAGE = "en"
     const val POPULARITY = 10.0

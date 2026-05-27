@@ -1,8 +1,9 @@
 package edu.dyds.movies.data.external.omdb.proxy
 
 import edu.dyds.movies.data.FakeOMDBMoviesExternalSource
+import edu.dyds.movies.FakeMovieDefaults
+import edu.dyds.movies.data.external.omdbRemoteMovie
 import edu.dyds.movies.domain.entity.Movie
-import edu.dyds.movies.movie
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,35 +14,26 @@ class OMDBMoviesProxyTest {
     @Test
     fun `getMovieByTitle should map OMDB fields to domain movie`() = runTest {
         // arrange
-        val baseMovie = movie(
+        val title = FakeMovieDefaults.title(1)
+        val overview = FakeMovieDefaults.overview(1)
+        val poster = FakeMovieDefaults.poster(1)
+        val remoteMovie = omdbRemoteMovie(
             id = 1,
-            title = "Title",
-            overview = "Plot",
-            releaseDate = "2020-01-01",
-            poster = "poster.png",
-            originalLanguage = "en",
-            popularity = 8.5,
-            voteAverage = 70.0
-        )
-        val remoteMovie = remoteMovie(
-            movie = baseMovie,
             released = "2020-01-01",
             year = "2019",
-            poster = "poster.png",
-            language = "en",
             metaScore = "70",
             imdbRating = "8.5"
         )
         val externalSource = FakeOMDBMoviesExternalSource(result = remoteMovie)
         val proxy = OMDBMoviesProxy(externalSource)
         val expected = Movie(
-            id = "Title".hashCode(),
-            title = "Title",
-            overview = "Plot",
+            id = title.hashCode(),
+            title = title,
+            overview = overview,
             releaseDate = "2020-01-01",
-            poster = "poster.png",
-            backdrop = "poster.png",
-            originalTitle = "Title",
+            poster = poster,
+            backdrop = poster,
+            originalTitle = title,
             originalLanguage = "en",
             popularity = 8.5,
             voteAverage = 70.0
@@ -58,35 +50,26 @@ class OMDBMoviesProxyTest {
     @Test
     fun `getMovieByTitle should fallback when OMDB returns N-A values`() = runTest {
         // arrange
-        val baseMovie = movie(
+        val title = FakeMovieDefaults.title(1)
+        val overview = FakeMovieDefaults.overview(1)
+        val poster = FakeMovieDefaults.poster(1)
+        val remoteMovie = omdbRemoteMovie(
             id = 1,
-            title = "Title",
-            overview = "Plot",
-            releaseDate = "2018",
-            poster = "poster.png",
-            originalLanguage = "en",
-            popularity = 0.0,
-            voteAverage = 0.0
-        )
-        val remoteMovie = remoteMovie(
-            movie = baseMovie,
             released = "N/A",
             year = "2018",
-            poster = "poster.png",
-            language = "en",
             metaScore = "N/A",
             imdbRating = "N/A"
         )
         val externalSource = FakeOMDBMoviesExternalSource(result = remoteMovie)
         val proxy = OMDBMoviesProxy(externalSource)
         val expected = Movie(
-            id = "Title".hashCode(),
-            title = "Title",
-            overview = "Plot",
+            id = title.hashCode(),
+            title = title,
+            overview = overview,
             releaseDate = "2018",
-            poster = "poster.png",
-            backdrop = "poster.png",
-            originalTitle = "Title",
+            poster = poster,
+            backdrop = poster,
+            originalTitle = title,
             originalLanguage = "en",
             popularity = 0.0,
             voteAverage = 0.0
@@ -103,35 +86,26 @@ class OMDBMoviesProxyTest {
     @Test
     fun `getMovieByTitle should fallback when OMDB returns empty strings`() = runTest {
         // arrange
-        val baseMovie = movie(
+        val title = FakeMovieDefaults.title(1)
+        val overview = FakeMovieDefaults.overview(1)
+        val poster = FakeMovieDefaults.poster(1)
+        val remoteMovie = omdbRemoteMovie(
             id = 1,
-            title = "Title",
-            overview = "Plot",
-            releaseDate = "2017",
-            poster = "poster.png",
-            originalLanguage = "en",
-            popularity = 0.0,
-            voteAverage = 0.0
-        )
-        val remoteMovie = remoteMovie(
-            movie = baseMovie,
             released = "",
             year = "2017",
-            poster = "poster.png",
-            language = "en",
             metaScore = "",
             imdbRating = ""
         )
         val externalSource = FakeOMDBMoviesExternalSource(result = remoteMovie)
         val proxy = OMDBMoviesProxy(externalSource)
         val expected = Movie(
-            id = "Title".hashCode(),
-            title = "Title",
-            overview = "Plot",
+            id = title.hashCode(),
+            title = title,
+            overview = overview,
             releaseDate = "2017",
-            poster = "poster.png",
-            backdrop = "poster.png",
-            originalTitle = "Title",
+            poster = poster,
+            backdrop = poster,
+            originalTitle = title,
             originalLanguage = "en",
             popularity = 0.0,
             voteAverage = 0.0
@@ -172,4 +146,5 @@ class OMDBMoviesProxyTest {
         assertNull(result)
         assertEquals(1, externalSource.getMovieDetailsCalls)
     }
+
 }
