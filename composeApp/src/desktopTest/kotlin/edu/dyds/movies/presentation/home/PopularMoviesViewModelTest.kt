@@ -2,7 +2,7 @@ package edu.dyds.movies.presentation.home
 
 import app.cash.turbine.test
 import edu.dyds.movies.domain.entity.QualifiedMovie
-import edu.dyds.movies.movie
+import edu.dyds.movies.movieFromSeed
 import edu.dyds.movies.presentation.FakeGetPopularMoviesUseCase
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -11,8 +11,8 @@ import kotlin.test.assertEquals
 class PopularMoviesViewModelTest {
 
     private fun expectedQualifiedMovies(): List<QualifiedMovie> = listOf(
-        QualifiedMovie(movie = movie(id = 1), isGoodMovie = true),
-        QualifiedMovie(movie = movie(id = 2), isGoodMovie = false),
+        QualifiedMovie(movie = movieFromSeed(seed = 1), isGoodMovie = true),
+        QualifiedMovie(movie = movieFromSeed(seed = 2), isGoodMovie = false),
     )
 
     @Test

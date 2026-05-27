@@ -1,6 +1,6 @@
 package edu.dyds.movies.data
 
-import edu.dyds.movies.movie
+import edu.dyds.movies.movieFromSeed
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -11,7 +11,7 @@ class MoviesRepositoryImplTest {
     @Test
     fun `getPopularMovies should return local data and skip remote when cache is not empty`() = runTest {
         // arrange
-        val localMovies = listOf(movie(id = 1), movie(id = 2))
+        val localMovies = listOf(movieFromSeed(seed = 1), movieFromSeed(seed = 2))
         val local = FakeMoviesLocalSource(initialMovies = localMovies)
         val popularRemote = FakePopularMoviesExternalSource(exception = IllegalStateException())
         val movieDetailsExternalSource = FakeMovieDetailsExternalSource()
@@ -30,7 +30,7 @@ class MoviesRepositoryImplTest {
     @Test
     fun `getPopularMovies should fetch remote data and cache when local is empty`() = runTest {
         // arrange
-        val expectedMovies = listOf(movie(id = 1), movie(id = 2))
+        val expectedMovies = listOf(movieFromSeed(seed = 1), movieFromSeed(seed = 2))
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource(result = expectedMovies)
         val movieDetailsExternalSource = FakeMovieDetailsExternalSource()
@@ -87,7 +87,7 @@ class MoviesRepositoryImplTest {
     @Test
     fun `getMovieByTitle should return mapped movie when remote succeeds`() = runTest {
         // arrange
-        val expectedMovie = movie(id = 20)
+        val expectedMovie = movieFromSeed(seed = 20)
         val local = FakeMoviesLocalSource()
         val popularRemote = FakePopularMoviesExternalSource()
         val movieDetailsExternalSource = FakeMovieDetailsExternalSource(result = expectedMovie)

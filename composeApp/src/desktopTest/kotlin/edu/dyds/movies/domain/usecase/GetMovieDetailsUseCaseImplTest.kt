@@ -1,6 +1,6 @@
 package edu.dyds.movies.domain.usecase
 
-import edu.dyds.movies.movie
+import edu.dyds.movies.movieFromSeed
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -11,7 +11,7 @@ class GetMovieDetailsUseCaseImplTest {
     @Test
     fun `invoke should return movie details from repository`() = runTest {
         // arrange
-        val expectedMovie = movie(id = 10)
+        val expectedMovie = movieFromSeed(seed = 10)
         val repository = FakeMoviesRepository(movieByTitle = expectedMovie)
         val useCase = GetMovieDetailsUseCaseImpl(repository)
 

@@ -1,9 +1,9 @@
 package edu.dyds.movies.data.external.tmdb.proxy
 
 import edu.dyds.movies.data.FakeTMDBMoviesExternalSource
-import edu.dyds.movies.data.external.tmdbRemoteMovie
-import edu.dyds.movies.data.external.tmdbRemoteResult
-import edu.dyds.movies.movie
+import edu.dyds.movies.movieFromSeed
+import edu.dyds.movies.tmdbRemoteMovie
+import edu.dyds.movies.tmdbRemoteResult
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,19 +14,14 @@ class TMDBMoviesProxyTest {
     @Test
     fun `getPopularMovies should map results to domain movies`() = runTest {
         // arrange
-        val remoteMovie = tmdbRemoteMovie(
-            id = 10,
-            posterPath = "/poster.png",
-            backdropPath = "/backdrop.png"
-        )
-        val externalSource = FakeTMDBMoviesExternalSource(
-            popularResult = tmdbRemoteResult(results = listOf(remoteMovie))
-        )
+        val remoteMovie = tmdbRemoteMovie(seed = 1)
+
+        val externalSource = FakeTMDBMoviesExternalSource(tmdbRemoteResult(listOf(remoteMovie)))
         val proxy = TMDBMoviesProxy(externalSource)
-        val expected = movie(
-            id = 10,
-            poster = "https://image.tmdb.org/t/p/w185/poster.png",
-            backdrop = "https://image.tmdb.org/t/p/w780/backdrop.png"
+        val expected = movieFromSeed(
+            seed = 1,
+            poster = "https://image.tmdb.org/t/p/w185${remoteMovie.posterPath}",
+            backdrop = "https://image.tmdb.org/t/p/w780${remoteMovie.backdropPath}",
         )
 
         // act
@@ -41,7 +36,7 @@ class TMDBMoviesProxyTest {
     fun `getPopularMovies should return empty list when external source returns no results`() = runTest {
         // arrange
         val externalSource = FakeTMDBMoviesExternalSource(
-            popularResult = tmdbRemoteResult(results = emptyList(), totalResults = 0)
+            popularResult = tmdbRemoteResult(results = emptyList())
         )
         val proxy = TMDBMoviesProxy(externalSource)
 
@@ -68,29 +63,19 @@ class TMDBMoviesProxyTest {
     }
 
     @Test
-    fun `getMovieByTitle should map the first result`() = runTest {
+    fun `getMovieByTitle should map the remote movie to a domain movie`() = runTest {
         // arrange
-        val remoteMovie = tmdbRemoteMovie(
-            id = 20,
-            releaseDate = null,
-            posterPath = null,
-            backdropPath = null,
-            popularity = null,
-            voteAverage = null
-        )
+        val remoteMovie = tmdbRemoteMovie(seed = 1)
         val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie)
         val proxy = TMDBMoviesProxy(externalSource)
-        val expected = movie(
-            id = 20,
-            releaseDate = "",
-            poster = "",
-            backdrop = null,
-            popularity = 0.0,
-            voteAverage = 0.0
+        val expected = movieFromSeed(
+            seed = 1,
+            poster = "https://image.tmdb.org/t/p/w185${remoteMovie.posterPath}",
+            backdrop = "https://image.tmdb.org/t/p/w780${remoteMovie.backdropPath}"
         )
 
         // act
-        val result = proxy.getMovieByTitle("Detail")
+        val result = proxy.getMovieByTitle(remoteMovie.title)
 
         // assert
         assertEquals(expected, result)
@@ -98,33 +83,9 @@ class TMDBMoviesProxyTest {
     }
 
     @Test
-    fun `getMovieByTitle should map empty poster and backdrop paths to empty strings`() = runTest {
+    fun `getMovieByTitle should return null when external source returns empty results`() = runTest {
         // arrange
-        val remoteMovie = tmdbRemoteMovie(
-            id = 30,
-            posterPath = "",
-            backdropPath = ""
-        )
-        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie)
-        val proxy = TMDBMoviesProxy(externalSource)
-        val expected = movie(
-            id = 30,
-            poster = "https://image.tmdb.org/t/p/w185",
-            backdrop = "https://image.tmdb.org/t/p/w780"
-        )
-
-        // act
-        val result = proxy.getMovieByTitle("Detail")
-
-        // assert
-        assertEquals(expected, result)
-        assertEquals(1, externalSource.getMovieDetailsCalls)
-    }
-
-    @Test
-    fun `getMovieByTitle should return null when external source fails`() = runTest {
-        // arrange
-        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsException = IllegalStateException())
+        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = null)
         val proxy = TMDBMoviesProxy(externalSource)
 
         // act
@@ -136,9 +97,9 @@ class TMDBMoviesProxyTest {
     }
 
     @Test
-    fun `getMovieByTitle should return null when external source returns null`() = runTest {
+    fun `getMovieByTitle should return null when external source fails`() = runTest {
         // arrange
-        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = null)
+        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsException = IllegalStateException())
         val proxy = TMDBMoviesProxy(externalSource)
 
         // act

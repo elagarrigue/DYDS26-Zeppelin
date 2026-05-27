@@ -27,7 +27,7 @@ private fun TMDBRemoteMovie.toDomainMovie(): Movie {
         overview = overview,
         releaseDate = releaseDate.orEmpty(),
         poster = posterPath?.let { "$TMDB_IMAGE_BASE_URL/w185$it" }.orEmpty(),
-        backdrop = backdropPath?.let { "$TMDB_IMAGE_BASE_URL/w780$it" },
+        backdrop = backdropPath?.let { "$TMDB_IMAGE_BASE_URL/w780$it" }.orEmpty(),
         originalTitle = originalTitle,
         originalLanguage = originalLanguage,
         popularity = popularity ?: 0.0,

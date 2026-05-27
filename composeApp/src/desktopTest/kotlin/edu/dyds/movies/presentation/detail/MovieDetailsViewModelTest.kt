@@ -1,7 +1,7 @@
 package edu.dyds.movies.presentation.detail
 
 import app.cash.turbine.test
-import edu.dyds.movies.movie
+import edu.dyds.movies.movieFromSeed
 import edu.dyds.movies.presentation.FakeGetMovieDetailsUseCase
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -28,7 +28,7 @@ class MovieDetailsViewModelTest {
     @Test
     fun `getMovieDetails should emit loading before returning content`() = runTest {
         // arrange
-        val expectedMovie = movie(id = 10)
+        val expectedMovie = movieFromSeed(seed = 10)
         val useCase = FakeGetMovieDetailsUseCase(movie = expectedMovie)
         val viewModel = MovieDetailsViewModel(useCase)
         var loadingState: MovieDetailsUiState? = null

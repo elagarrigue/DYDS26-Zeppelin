@@ -1,6 +1,6 @@
 package edu.dyds.movies.data.local
 
-import edu.dyds.movies.movie
+import edu.dyds.movies.movieFromSeed
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,8 +22,8 @@ class MoviesLocalSourceImplTest {
     fun `savePopularMovies should replace cached movies`() {
         // arrange
         val dataSource = MoviesLocalSourceImpl()
-        val first = listOf(movie(id = 1), movie(id = 2))
-        val second = listOf(movie(id = 3))
+        val first = listOf(movieFromSeed(seed = 1), movieFromSeed(seed = 2))
+        val second = listOf(movieFromSeed(seed = 3))
 
         // act
         dataSource.savePopularMovies(first)
@@ -38,28 +38,28 @@ class MoviesLocalSourceImplTest {
     fun `savePopularMovies should not be affected by external list mutation`() {
         // arrange
         val dataSource = MoviesLocalSourceImpl()
-        val movies = mutableListOf(movie(id = 1))
+        val movies = mutableListOf(movieFromSeed(seed = 1))
 
         // act
         dataSource.savePopularMovies(movies)
-        movies.add(movie(id = 2))
+        movies.add(movieFromSeed(seed = 2))
         val result = dataSource.getPopularMovies()
 
         // assert
-        assertEquals(listOf(movie(id = 1)), result)
+        assertEquals(listOf(movieFromSeed(seed = 1)), result)
     }
 
     @Test
     fun `getPopularMovies returned list mutation should not affect internal cache`() {
         // arrange
         val dataSource = MoviesLocalSourceImpl()
-        val original = listOf(movie(id = 1))
+        val original = listOf(movieFromSeed(seed = 1))
         dataSource.savePopularMovies(original)
 
         // act
         val result = dataSource.getPopularMovies()
         val mutableCopy = result.toMutableList()
-        mutableCopy.add(movie(id = 2))
+        mutableCopy.add(movieFromSeed(seed = 2))
         val afterMutation = dataSource.getPopularMovies()
 
         // assert
