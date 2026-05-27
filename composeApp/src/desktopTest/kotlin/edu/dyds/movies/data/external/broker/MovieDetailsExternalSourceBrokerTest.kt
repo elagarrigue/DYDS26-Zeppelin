@@ -37,7 +37,7 @@ class MovieDetailsExternalSourceBrokerTest {
         )
 
         // act
-        val result = broker.getMovieByTitle("Any")
+        val result = broker.getMovieByTitle(tmdbMovie.title)
 
         // assert
         assertEquals(expected, result)
@@ -125,6 +125,45 @@ class MovieDetailsExternalSourceBrokerTest {
 
         // assert
         assertNull(result)
+        assertEquals(1, tmdbExternalSource.getMovieDetailsCalls)
+        assertEquals(1, omdbExternalSource.getMovieDetailsCalls)
+    }
+
+    @Test
+    fun `getMovieByTitle should return OMDB result when TMDB returns null`() = runTest {
+        // arrange
+        val title = "The Matrix"
+        val posterUrl = "http://example.com/poster.jpg"
+        val omdbMovie = movie(
+            id = 1,
+            title = title,
+            overview = "Omdb overview",
+            releaseDate = "1999-03-31",
+            poster = posterUrl
+        )
+        val tmdbExternalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = null)
+        val omdbExternalSource = FakeOMDBMoviesExternalSource(result = remoteOmdbMovie(omdbMovie, posterUrl))
+        val tmdbProxy = TMDBMoviesProxy(tmdbExternalSource)
+        val omdbProxy = OMDBMoviesProxy(omdbExternalSource)
+        val broker = MovieDetailsExternalSourceBroker(tmdbProxy, omdbProxy)
+        val expected = Movie(
+            id = title.hashCode(),
+            title = title,
+            overview = "OMDB: ${omdbMovie.overview}",
+            releaseDate = omdbMovie.releaseDate,
+            poster = posterUrl,
+            backdrop = posterUrl,
+            originalTitle = title,
+            originalLanguage = omdbMovie.originalLanguage,
+            popularity = omdbMovie.popularity,
+            voteAverage = omdbMovie.voteAverage
+        )
+
+        // act
+        val result = broker.getMovieByTitle(title)
+
+        // assert
+        assertEquals(expected, result)
         assertEquals(1, tmdbExternalSource.getMovieDetailsCalls)
         assertEquals(1, omdbExternalSource.getMovieDetailsCalls)
     }
