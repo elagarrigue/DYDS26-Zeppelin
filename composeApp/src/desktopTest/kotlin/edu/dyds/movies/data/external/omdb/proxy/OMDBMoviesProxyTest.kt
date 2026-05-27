@@ -1,7 +1,6 @@
 package edu.dyds.movies.data.external.omdb.proxy
 
 import edu.dyds.movies.data.FakeOMDBMoviesExternalSource
-import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSource
 import edu.dyds.movies.data.external.omdb.OMDBRemoteMovie
 import edu.dyds.movies.domain.entity.Movie
 import kotlinx.coroutines.test.runTest
@@ -87,6 +86,56 @@ class OMDBMoviesProxyTest {
     fun `getMovieByTitle should return null when external source fails`() = runTest {
         // arrange
         val externalSource = FakeOMDBMoviesExternalSource(exception = IllegalStateException())
+        val proxy = OMDBMoviesProxy(externalSource)
+
+        // act
+        val result = proxy.getMovieByTitle("Missing")
+
+        // assert
+        assertNull(result)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
+    }
+
+    @Test
+    fun `getMovieByTitle should fallback when OMDB returns empty strings`() = runTest {
+        // arrange
+        val remoteMovie = OMDBRemoteMovie(
+            title = "Title",
+            plot = "Plot",
+            released = "",
+            year = "2017",
+            poster = "poster.png",
+            language = "en",
+            metaScore = "",
+            imdbRating = ""
+        )
+        val externalSource = FakeOMDBMoviesExternalSource(result = remoteMovie)
+        val proxy = OMDBMoviesProxy(externalSource)
+        val expected = Movie(
+            id = "Title".hashCode(),
+            title = "Title",
+            overview = "Plot",
+            releaseDate = "2017",
+            poster = "poster.png",
+            backdrop = "poster.png",
+            originalTitle = "Title",
+            originalLanguage = "en",
+            popularity = 0.0,
+            voteAverage = 0.0
+        )
+
+        // act
+        val result = proxy.getMovieByTitle("Title")
+
+        // assert
+        assertEquals(expected, result)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
+    }
+
+    @Test
+    fun `getMovieByTitle should return null when external source returns null`() = runTest {
+        // arrange
+        val externalSource = FakeOMDBMoviesExternalSource(result = null)
         val proxy = OMDBMoviesProxy(externalSource)
 
         // act
