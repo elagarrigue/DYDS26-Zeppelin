@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class TMDBMoviesProxyTest {
+class TMDBMoviesProxyImplTest {
 
     @Test
     fun `getPopularMovies should map results to domain movies`() = runTest {
@@ -17,7 +17,7 @@ class TMDBMoviesProxyTest {
         val remoteMovie = tmdbRemoteMovie(seed = 1)
 
         val externalSource = FakeTMDBMoviesExternalSource(tmdbRemoteResult(listOf(remoteMovie)))
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
         val expected = movieFromSeed(
             seed = 1,
             poster = "https://image.tmdb.org/t/p/w185${remoteMovie.posterPath}",
@@ -38,7 +38,7 @@ class TMDBMoviesProxyTest {
         val externalSource = FakeTMDBMoviesExternalSource(
             popularResult = tmdbRemoteResult(results = emptyList())
         )
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
 
         // act
         val result = proxy.getPopularMovies()
@@ -52,7 +52,7 @@ class TMDBMoviesProxyTest {
     fun `getPopularMovies should return empty list when external source fails`() = runTest {
         // arrange
         val externalSource = FakeTMDBMoviesExternalSource(popularException = IllegalStateException())
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
 
         // act
         val result = proxy.getPopularMovies()
@@ -67,7 +67,7 @@ class TMDBMoviesProxyTest {
         // arrange
         val remoteMovie = tmdbRemoteMovie(seed = 1)
         val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie)
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
         val expected = movieFromSeed(
             seed = 1,
             poster = "https://image.tmdb.org/t/p/w185${remoteMovie.posterPath}",
@@ -86,7 +86,7 @@ class TMDBMoviesProxyTest {
     fun `getMovieByTitle should return null when external source returns empty results`() = runTest {
         // arrange
         val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = null)
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
 
         // act
         val result = proxy.getMovieByTitle("Missing")
@@ -100,7 +100,7 @@ class TMDBMoviesProxyTest {
     fun `getMovieByTitle should return null when external source fails`() = runTest {
         // arrange
         val externalSource = FakeTMDBMoviesExternalSource(movieDetailsException = IllegalStateException())
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
 
         // act
         val result = proxy.getMovieByTitle("Missing")
@@ -123,7 +123,7 @@ class TMDBMoviesProxyTest {
         )
 
         val externalSource = FakeTMDBMoviesExternalSource(popularResult = tmdbRemoteResult(listOf(remoteMovie)))
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
         val expected = movieFromSeed(
             seed = 1,
             releaseDate = "",
@@ -153,7 +153,7 @@ class TMDBMoviesProxyTest {
             voteAverage = null,
         )
         val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie)
-        val proxy = TMDBMoviesProxy(externalSource)
+        val proxy = TMDBMoviesProxyImpl(externalSource)
         val expected = movieFromSeed(
             seed = 1,
             releaseDate = "",

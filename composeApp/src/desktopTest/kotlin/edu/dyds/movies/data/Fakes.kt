@@ -2,13 +2,15 @@ package edu.dyds.movies.data
 
 import edu.dyds.movies.data.external.PopularMoviesExternalSource
 import edu.dyds.movies.data.external.MovieDetailsExternalSource
-import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSource
 import edu.dyds.movies.data.external.omdb.OMDBRemoteMovie
 import edu.dyds.movies.data.external.tmdb.TMDBMoviesExternalSource
 import edu.dyds.movies.data.external.tmdb.TMDBRemoteResult
 import edu.dyds.movies.data.external.tmdb.TMDBRemoteMovie
 import edu.dyds.movies.data.local.MoviesLocalSource
 import edu.dyds.movies.domain.entity.Movie
+import edu.dyds.movies.data.external.omdb.proxy.OMDBMoviesProxy
+import edu.dyds.movies.data.external.tmdb.proxy.TMDBMoviesProxy
+import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSource
 
 class FakePopularMoviesExternalSource(
     var result: List<Movie>? = null,
@@ -23,7 +25,7 @@ class FakePopularMoviesExternalSource(
     }
 }
 
-class FakeMovieDetailsExternalSource(
+open class FakeMovieDetailsExternalSource(
     var result: Movie? = null,
     var exception: Exception? = null,
 ) : MovieDetailsExternalSource {
@@ -81,6 +83,16 @@ class FakeTMDBMoviesExternalSource(
         return requireNotNull(popularResult)
     }
 }
+
+class FakeTMDBMoviesProxy(
+    result: Movie? = null,
+    exception: Exception? = null,
+) : FakeMovieDetailsExternalSource(result, exception), TMDBMoviesProxy
+
+class FakeOMDBMoviesProxy(
+    result: Movie? = null,
+    exception: Exception? = null,
+) : FakeMovieDetailsExternalSource(result, exception), OMDBMoviesProxy
 
 class FakeOMDBMoviesExternalSource(
     var result: OMDBRemoteMovie? = null,

@@ -8,14 +8,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class OMDBMoviesProxyTest {
+class OMDBMoviesProxyImplTest {
 
     @Test
     fun `getMovieByTitle should map OMDB fields to domain movie`() = runTest {
         // arrange
         val remoteMovie = omdbRemoteMovie(seed = 1)
         val externalSource = FakeOMDBMoviesExternalSource(result = remoteMovie)
-        val proxy = OMDBMoviesProxy(externalSource)
+        val proxy = OMDBMoviesProxyImpl(externalSource)
         val expected = movieFromSeedAsOmdb(seed = 1)
 
         // act
@@ -38,7 +38,7 @@ class OMDBMoviesProxyTest {
         )
 
         val externalSource = FakeOMDBMoviesExternalSource(result = remoteMovie)
-        val proxy = OMDBMoviesProxy(externalSource)
+        val proxy = OMDBMoviesProxyImpl(externalSource)
 
         val expected = movieFromSeedAsOmdb(
             seed = 1,
@@ -66,7 +66,7 @@ class OMDBMoviesProxyTest {
             imdbRating = ""
         )
         val externalSource = FakeOMDBMoviesExternalSource(result = remoteMovie)
-        val proxy = OMDBMoviesProxy(externalSource)
+        val proxy = OMDBMoviesProxyImpl(externalSource)
 
         val expected = movieFromSeedAsOmdb(
             seed = 1,
@@ -87,7 +87,7 @@ class OMDBMoviesProxyTest {
     fun `getMovieByTitle should return null when external source fails`() = runTest {
         // arrange
         val externalSource = FakeOMDBMoviesExternalSource(exception = IllegalStateException())
-        val proxy = OMDBMoviesProxy(externalSource)
+        val proxy = OMDBMoviesProxyImpl(externalSource)
 
         // act
         val result = proxy.getMovieByTitle("Missing")
@@ -101,7 +101,7 @@ class OMDBMoviesProxyTest {
     fun `getMovieByTitle should return null when external source returns null`() = runTest {
         // arrange
         val externalSource = FakeOMDBMoviesExternalSource(result = null)
-        val proxy = OMDBMoviesProxy(externalSource)
+        val proxy = OMDBMoviesProxyImpl(externalSource)
 
         // act
         val result = proxy.getMovieByTitle("Missing")

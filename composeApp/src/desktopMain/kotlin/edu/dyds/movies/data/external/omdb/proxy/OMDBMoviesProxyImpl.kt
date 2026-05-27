@@ -5,9 +5,11 @@ import edu.dyds.movies.data.external.omdb.OMDBRemoteMovie
 import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSource
 import edu.dyds.movies.domain.entity.Movie
 
-internal class OMDBMoviesProxy(
+internal interface OMDBMoviesProxy : MovieDetailsExternalSource
+
+internal class OMDBMoviesProxyImpl(
     private val externalSource: OMDBMoviesExternalSource,
-) : MovieDetailsExternalSource {
+) : OMDBMoviesProxy {
     override suspend fun getMovieByTitle(title: String): Movie? =
         runCatching { externalSource.getMovie(title).toDomainMovie() }
             .getOrNull()
@@ -31,4 +33,3 @@ private fun OMDBRemoteMovie.toDomainMovie(): Movie {
         voteAverage = voteAverage
     )
 }
-

@@ -41,6 +41,3 @@ internal class MovieDetailsExternalSourceBroker(
     private fun Movie.withSourceOverview(source: String): Movie =
         copy(overview = "$source: $overview")
 }
-
-
-
