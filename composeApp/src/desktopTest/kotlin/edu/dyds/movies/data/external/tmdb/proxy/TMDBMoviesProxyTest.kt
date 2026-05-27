@@ -109,4 +109,65 @@ class TMDBMoviesProxyTest {
         assertNull(result)
         assertEquals(1, externalSource.getMovieDetailsCalls)
     }
+
+    @Test
+    fun `getPopularMovies should map nullable remote fields to defaults`() = runTest {
+        // arrange: remote fields that can be null in mapping
+        val remoteMovie = tmdbRemoteMovie(
+            seed = 1,
+            releaseDate = null,
+            posterPath = null,
+            backdropPath = null,
+            popularity = null,
+            voteAverage = null,
+        )
+
+        val externalSource = FakeTMDBMoviesExternalSource(popularResult = tmdbRemoteResult(listOf(remoteMovie)))
+        val proxy = TMDBMoviesProxy(externalSource)
+        val expected = movieFromSeed(
+            seed = 1,
+            releaseDate = "",
+            poster = "",
+            backdrop = "",
+            popularity = 0.0,
+            voteAverage = 0.0,
+        )
+
+        // act
+        val result = proxy.getPopularMovies()
+
+        // assert
+        assertEquals(listOf(expected), result)
+        assertEquals(1, externalSource.getPopularMoviesCalls)
+    }
+
+    @Test
+    fun `getMovieByTitle should map nullable remote fields to defaults`() = runTest {
+        // arrange
+        val remoteMovie = tmdbRemoteMovie(
+            seed = 1,
+            releaseDate = null,
+            posterPath = null,
+            backdropPath = null,
+            popularity = null,
+            voteAverage = null,
+        )
+        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie)
+        val proxy = TMDBMoviesProxy(externalSource)
+        val expected = movieFromSeed(
+            seed = 1,
+            releaseDate = "",
+            poster = "",
+            backdrop = "",
+            popularity = 0.0,
+            voteAverage = 0.0,
+        )
+
+        // act
+        val result = proxy.getMovieByTitle(remoteMovie.title)
+
+        // assert
+        assertEquals(expected, result)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
+    }
 }
