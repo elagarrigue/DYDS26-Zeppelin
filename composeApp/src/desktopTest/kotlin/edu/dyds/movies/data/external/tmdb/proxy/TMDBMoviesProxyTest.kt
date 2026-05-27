@@ -71,6 +71,27 @@ class TMDBMoviesProxyTest {
     }
 
     @Test
+    fun `getPopularMovies should return empty list when external source returns no results`() = runTest {
+        // arrange
+        val externalSource = FakeTMDBMoviesExternalSource(
+            popularResult = TMDBRemoteResult(
+                page = 1,
+                results = emptyList(),
+                totalPages = 1,
+                totalResults = 0
+            )
+        )
+        val proxy = TMDBMoviesProxy(externalSource)
+
+        // act
+        val result = proxy.getPopularMovies()
+
+        // assert
+        assertEquals(emptyList(), result)
+        assertEquals(1, externalSource.getPopularMoviesCalls)
+    }
+
+    @Test
     fun `getMovieByTitle should map the first result`() = runTest {
         // arrange
         val remoteMovie = TMDBRemoteMovie(
@@ -119,6 +140,58 @@ class TMDBMoviesProxyTest {
 
         // assert
         assertNull(result)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
+    }
+
+    @Test
+    fun `getMovieByTitle should return null when external source fails`() = runTest {
+        // arrange
+        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsException = IllegalStateException())
+        val proxy = TMDBMoviesProxy(externalSource)
+
+        // act
+        val result = proxy.getMovieByTitle("Missing")
+
+        // assert
+        assertNull(result)
+        assertEquals(1, externalSource.getMovieDetailsCalls)
+    }
+
+    @Test
+    fun `getMovieByTitle should map empty poster and backdrop paths to empty strings`() = runTest {
+        // arrange
+        val remoteMovie = TMDBRemoteMovie(
+            id = 30,
+            title = "Detail",
+            overview = "Detail overview",
+            releaseDate = "2024-01-01",
+            posterPath = "",
+            backdropPath = "",
+            originalTitle = "Detail original",
+            originalLanguage = "en",
+            popularity = 1.0,
+            voteAverage = 2.0
+        )
+        val externalSource = FakeTMDBMoviesExternalSource(movieDetailsResult = remoteMovie)
+        val proxy = TMDBMoviesProxy(externalSource)
+        val expected = Movie(
+            id = 30,
+            title = "Detail",
+            overview = "Detail overview",
+            releaseDate = "2024-01-01",
+            poster = "https://image.tmdb.org/t/p/w185",
+            backdrop = "https://image.tmdb.org/t/p/w780",
+            originalTitle = "Detail original",
+            originalLanguage = "en",
+            popularity = 1.0,
+            voteAverage = 2.0
+        )
+
+        // act
+        val result = proxy.getMovieByTitle("Detail")
+
+        // assert
+        assertEquals(expected, result)
         assertEquals(1, externalSource.getMovieDetailsCalls)
     }
 }
