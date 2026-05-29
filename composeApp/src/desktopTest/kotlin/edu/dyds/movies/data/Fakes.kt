@@ -84,16 +84,6 @@ class FakeTMDBMoviesExternalSource(
     }
 }
 
-class FakeTMDBMoviesProxy(
-    result: Movie? = null,
-    exception: Exception? = null,
-) : FakeMovieDetailsExternalSource(result, exception), TMDBMoviesProxy
-
-class FakeOMDBMoviesProxy(
-    result: Movie? = null,
-    exception: Exception? = null,
-) : FakeMovieDetailsExternalSource(result, exception), OMDBMoviesProxy
-
 class FakeOMDBMoviesExternalSource(
     var result: OMDBRemoteMovie? = null,
     var exception: Exception? = null,

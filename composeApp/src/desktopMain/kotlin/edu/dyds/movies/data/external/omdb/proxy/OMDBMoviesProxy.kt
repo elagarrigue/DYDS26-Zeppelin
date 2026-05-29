@@ -5,11 +5,9 @@ import edu.dyds.movies.data.external.omdb.OMDBRemoteMovie
 import edu.dyds.movies.data.external.omdb.OMDBMoviesExternalSource
 import edu.dyds.movies.domain.entity.Movie
 
-internal interface OMDBMoviesProxy : MovieDetailsExternalSource
-
-internal class OMDBMoviesProxyImpl(
+internal class OMDBMoviesProxy(
     private val externalSource: OMDBMoviesExternalSource,
-) : OMDBMoviesProxy {
+) : MovieDetailsExternalSource {
     override suspend fun getMovieByTitle(title: String): Movie? =
         runCatching { externalSource.getMovie(title).toDomainMovie() }
             .getOrNull()

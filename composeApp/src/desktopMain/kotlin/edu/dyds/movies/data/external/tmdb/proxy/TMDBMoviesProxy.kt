@@ -8,11 +8,9 @@ import edu.dyds.movies.domain.entity.Movie
 
 private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p"
 
-internal interface TMDBMoviesProxy : MovieDetailsExternalSource
-
-internal class TMDBMoviesProxyImpl(
+internal class TMDBMoviesProxy(
     private val externalSource: TMDBMoviesExternalSource,
-) : PopularMoviesExternalSource, TMDBMoviesProxy {
+) : PopularMoviesExternalSource, MovieDetailsExternalSource {
     override suspend fun getPopularMovies(): List<Movie> =
         runCatching { externalSource.getPopularMovies().results.map { it.toDomainMovie() } }
             .getOrDefault(emptyList())
