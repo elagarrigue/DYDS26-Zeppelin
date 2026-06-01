@@ -1,6 +1,6 @@
 package edu.dyds.movies.domain.usecase
 
-import edu.dyds.movies.movie
+import edu.dyds.movies.movieFromSeed
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,9 +12,9 @@ class GetPopularMoviesUseCaseImplTest {
     @Test
     fun `invoke should sort by vote average desc and classify movies`() = runTest {
         // arrange
-        val low = movie(id = 1, voteAverage = 5.9)
-        val edge = movie(id = 2, voteAverage = 6.0)
-        val high = movie(id = 3, voteAverage = 8.2)
+        val low = movieFromSeed(seed = 1, voteAverage = 5.9)
+        val edge = movieFromSeed(seed = 2, voteAverage = 6.0)
+        val high = movieFromSeed(seed = 3, voteAverage = 8.2)
         val repository = FakeMoviesRepository(popularMovies = listOf(low, high, edge))
         val useCase = GetPopularMoviesUseCaseImpl(repository)
 

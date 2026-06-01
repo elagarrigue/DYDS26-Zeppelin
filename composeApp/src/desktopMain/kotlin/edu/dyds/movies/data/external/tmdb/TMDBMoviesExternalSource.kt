@@ -1,4 +1,4 @@
-package edu.dyds.movies.data.external
+package edu.dyds.movies.data.external.tmdb
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -10,9 +10,15 @@ import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-private const val API_KEY = "d18da1b5da16397619c688b0263cd281"
+private const val TMDB_API_KEY = "d18da1b5da16397619c688b0263cd281"
 
-class RemoteMoviesDataSourceImpl: RemoteMoviesDataSource {
+internal interface TMDBMoviesExternalSource {
+    suspend fun getMovie(title: String): TMDBRemoteMovie
+
+    suspend fun getPopularMovies(): TMDBRemoteResult
+}
+
+internal class TMDBMoviesExternalSourceImpl : TMDBMoviesExternalSource {
     private val httpClient =
         HttpClient {
             install(ContentNegotiation) {
@@ -24,7 +30,7 @@ class RemoteMoviesDataSourceImpl: RemoteMoviesDataSource {
                 url {
                     protocol = URLProtocol.HTTPS
                     host = "api.themoviedb.org"
-                    parameters.append("api_key", API_KEY)
+                    parameters.append("api_key", TMDB_API_KEY)
                 }
             }
             install(HttpTimeout) {
@@ -32,9 +38,11 @@ class RemoteMoviesDataSourceImpl: RemoteMoviesDataSource {
             }
         }
 
-    override suspend fun getPopularMovies(): RemoteResult =
-        httpClient.get("/3/discover/movie?sort_by=popularity.desc").body()
+    override suspend fun getMovie(title: String): TMDBRemoteMovie =
+        httpClient.get("/3/search/movie") {
+            url { parameters.append("query", title) }
+        }.body<TMDBRemoteResult>().results.first()
 
-    override suspend fun getMovieDetails(id: Int): RemoteMovie =
-        httpClient.get("/3/movie/$id").body()
+    override suspend fun getPopularMovies(): TMDBRemoteResult =
+        httpClient.get("/3/discover/movie?sort_by=popularity.desc").body()
 }

@@ -12,28 +12,28 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import edu.dyds.movies.presentation.detail.MovieDetailUiState
+import edu.dyds.movies.presentation.detail.MovieDetailsUiState
 import edu.dyds.movies.presentation.utils.LoadingIndicator
 import edu.dyds.movies.presentation.utils.NoResults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailContent(
-    state: MovieDetailUiState,
+fun DetailsContent(
+    state: MovieDetailsUiState,
     padding: PaddingValues,
     onRetry: () -> Unit
 ) {
     LoadingIndicator(enabled = state.isLoading, modifier = Modifier.padding(padding))
 
     when {
-        state.movie != null -> MovieDetail(movie = state.movie, modifier = Modifier.padding(padding))
+        state.movie != null -> MovieDetails(movie = state.movie, modifier = Modifier.padding(padding))
         state.isLoading.not() -> NoResults(onRetry)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailTopBar(
+fun DetailsTopBar(
     title: String,
     onBack: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior

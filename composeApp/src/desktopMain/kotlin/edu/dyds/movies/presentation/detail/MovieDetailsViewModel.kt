@@ -3,25 +3,25 @@ package edu.dyds.movies.presentation.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import edu.dyds.movies.domain.usecase.GetMovieDetailsUseCase
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase
 ) : ViewModel() {
-    private val movieDetailStateMutableStateFlow = MutableStateFlow(MovieDetailUiState())
-    val movieDetailStateFlow: Flow<MovieDetailUiState> = movieDetailStateMutableStateFlow
+    private val _movieDetailsUiState = MutableStateFlow(MovieDetailsUiState())
+    val movieDetailsStateFlow: StateFlow<MovieDetailsUiState> = _movieDetailsUiState
 
-    fun getMovieDetails(id: Int) {
+    fun getMovieDetails(title: String) {
         viewModelScope.launch {
-            movieDetailStateMutableStateFlow.emit(
-                MovieDetailUiState(isLoading = true)
+            _movieDetailsUiState.emit(
+                MovieDetailsUiState(isLoading = true)
             )
-            movieDetailStateMutableStateFlow.emit(
-                MovieDetailUiState(
+            _movieDetailsUiState.emit(
+                MovieDetailsUiState(
                     isLoading = false,
-                    movie = getMovieDetailsUseCase(id)
+                    movie = getMovieDetailsUseCase(title)
                 )
             )
         }

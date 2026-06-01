@@ -5,29 +5,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import edu.dyds.movies.presentation.detail.components.DetailContent
-import edu.dyds.movies.presentation.detail.components.DetailTopBar
+import edu.dyds.movies.presentation.detail.components.DetailsContent
+import edu.dyds.movies.presentation.detail.components.DetailsTopBar
 
 @Composable
-fun DetailRoute(viewModel: MovieDetailsViewModel, id: Int, onBack: () -> Unit) {
+fun DetailsRoute(viewModel: MovieDetailsViewModel, title: String, onBack: () -> Unit) {
 
-    LaunchedEffect(id) {
-        viewModel.getMovieDetails(id)
+    LaunchedEffect(title) {
+        viewModel.getMovieDetails(title)
     }
 
-    val state by viewModel.movieDetailStateFlow.collectAsState(MovieDetailUiState())
+    val state by viewModel.movieDetailsStateFlow.collectAsState(MovieDetailsUiState())
 
-    DetailScreen(
+    DetailsScreen(
         state = state,
         onBack = onBack,
-        onRetry = { viewModel.getMovieDetails(id) }
+        onRetry = { viewModel.getMovieDetails(title) }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(
-    state: MovieDetailUiState,
+fun DetailsScreen(
+    state: MovieDetailsUiState,
     onBack: () -> Unit,
     onRetry: () -> Unit
 ) {
@@ -38,14 +38,14 @@ fun DetailScreen(
         Surface {
             Scaffold(
                 topBar = {
-                    DetailTopBar(
+                    DetailsTopBar(
                         title = state.movie?.title ?: "",
                         onBack = onBack,
                         scrollBehavior = scrollBehavior
                     )
                 }
             ) { padding ->
-                DetailContent(
+                DetailsContent(
                     state = state,
                     padding = padding,
                     onRetry = onRetry

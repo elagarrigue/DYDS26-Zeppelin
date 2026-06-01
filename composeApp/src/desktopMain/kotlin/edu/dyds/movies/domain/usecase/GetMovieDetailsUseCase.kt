@@ -3,5 +3,5 @@
 import edu.dyds.movies.domain.entity.Movie
 
 interface GetMovieDetailsUseCase {
-    suspend operator fun invoke(id: Int): Movie?
+    suspend operator fun invoke(title: String): Movie?
 }
